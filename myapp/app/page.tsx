@@ -6,6 +6,7 @@ export default function Home() {
   const [image, setImage] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<any>(null);
+  const [xaiHeatmap, setXaiHeatmap] = useState<string | null>(null); // <--- New state for XAI image!
   const [loading, setLoading] = useState(false);
 
   // 2. When the user selects a picture
@@ -15,6 +16,7 @@ export default function Home() {
       setFile(selected);
       setImage(URL.createObjectURL(selected)); // Create a temporary link to show the picture
       setResult(null); // Clear the old answer
+      setXaiHeatmap(null); // Clear the old XAI picture!
     }
   };
 
@@ -34,7 +36,11 @@ export default function Home() {
         body: formData,
       });
       const data = await response.json();
-      setResult(data); // Save the AI's answer into memory!
+      
+      // Update memory with all the new info!
+      setResult(data); 
+      setXaiHeatmap(data.xai_image); // <--- Save the Base64 picture string into memory!
+      
     } catch (error) {
       console.log("Connection error!");
       setResult({ error: "The website couldn't reach the AI! We need to fix the door!" });
@@ -46,7 +52,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-green-50 flex items-center justify-center p-4">
       <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center border-t-8 border-green-500">
-        <h1 className="text-3xl font-bold text-green-700 mb-2">♻️ Govisaviya Waste Sorter</h1>
+        <h1 className="text-3xl font-bold text-green-700 mb-2">♻️Waste Sorter</h1>
         <p className="text-gray-500 mb-6">Upload a picture of garbage to get AI advice!</p>
 
         {/* The Upload Button */}
@@ -57,10 +63,28 @@ export default function Home() {
           className="mb-4 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-100 file:text-green-700 hover:file:bg-green-200 cursor-pointer" 
         />
 
-        {/* Show the Picture */}
-        {image && (
-          <img src={image} alt="Preview" className="w-full h-48 object-cover rounded-xl mb-4 shadow-md" />
-        )}
+        {/* Show the Picture - we'll show it side-by-side with the XAI one */}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {image && (
+            <div>
+                <img src={image} alt="Original" className="w-full h-36 object-cover rounded-xl shadow-md" />
+                <p className="text-xs text-gray-500 mt-1">Your Photo</p>
+            </div>
+          )}
+
+          {/* --- UPGRADE: SHOW THE XAI DETECTIVE picture! 🕵️‍♀️ --- */}
+          {xaiHeatmap && (
+             <div>
+                 {/* This img tag is special. Its src starts with 'data:image/jpg;base64,' to tell the browser how to read the Base64 string. */}
+                <img 
+                    src={`data:image/jpg;base64,${xaiHeatmap}`} 
+                    alt="Where the AI Looked" 
+                    className="w-full h-36 object-cover rounded-xl shadow-md border-2 border-red-300"
+                />
+                <p className="text-xs text-red-500 mt-1">Where the AI Looked</p>
+             </div>
+          )}
+        </div>
 
         {/* The Magic Button */}
         <button 
