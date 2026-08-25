@@ -7,13 +7,12 @@ import {
   Recycle,
   CheckSquare,
   Square,
-  AlertOctagon,
-  TreePine,
+  ShieldAlert,
+  Clock,
   Check,
   X,
-  Clock,
-  Sparkles,
-  ShieldAlert,
+  TrendingDown,
+  Info,
 } from "lucide-react";
 
 interface DisposalGuideProps {
@@ -32,26 +31,23 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/90 shadow-xl shadow-slate-200/40 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-none">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-100 bg-slate-50/70 px-6 py-4 dark:border-slate-800/80 dark:bg-slate-800/50">
+      <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-800/40">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-600 text-white shadow-xs">
-            <Recycle className="h-4 w-4" />
+          <span className="flex h-6 w-6 items-center justify-center rounded bg-slate-900 text-white dark:bg-emerald-600">
+            <Recycle className="h-3.5 w-3.5" />
           </span>
           <div>
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
-              ♻️ Step 3: Decision Support — Recommended Disposal Action
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              Stage 3: Decision Support — Prescribed Disposal Guidelines
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Prescribed handling guidelines, bin allocation, and contamination prevention
-            </p>
           </div>
         </div>
 
-        {/* Bin Badge */}
+        {/* Bin Designation Badge */}
         <div
-          className={`rounded-full px-3.5 py-1 text-xs font-bold shadow-xs ${knowledge.colorClass.binColor}`}
+          className={`rounded border px-3 py-1 text-xs font-bold ${knowledge.colorClass.binColor}`}
         >
           {knowledge.colorClass.binName}
         </div>
@@ -61,11 +57,11 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
         {/* Step-by-Step Interactive Action Checklist */}
         <div>
           <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            <CheckSquare className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            Step-by-Step Preparation Checklist
+            <CheckSquare className="h-4 w-4 text-slate-700 dark:text-slate-300" />
+            Standard Preparation Protocol
           </h3>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Follow and check off these preparation steps before disposing of this item:
+            Complete the following verification and handling steps prior to final deposit:
           </p>
 
           <div className="mt-3 space-y-2">
@@ -75,25 +71,25 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
                 <div
                   key={idx}
                   onClick={() => toggleStep(idx)}
-                  className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-all ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
                     isChecked
-                      ? "border-emerald-300 bg-emerald-50/60 text-emerald-950 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-200"
-                      : "border-slate-200 bg-slate-50/50 text-slate-800 hover:border-emerald-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:bg-slate-800"
+                      ? "border-emerald-300 bg-emerald-50/40 text-emerald-950 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-300"
+                      : "border-slate-200 bg-slate-50/50 text-slate-800 hover:border-slate-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:bg-slate-800"
                   }`}
                 >
                   <button
                     type="button"
-                    className="mt-0.5 text-emerald-600 transition-transform active:scale-90 dark:text-emerald-400"
+                    className="mt-0.5 text-slate-700 transition-transform dark:text-slate-300"
                   >
                     {isChecked ? (
-                      <CheckSquare className="h-5 w-5 fill-emerald-600 text-white dark:fill-emerald-500" />
+                      <CheckSquare className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
                     ) : (
-                      <Square className="h-5 w-5 text-slate-400" />
+                      <Square className="h-4 w-4 text-slate-400" />
                     )}
                   </button>
                   <span
-                    className={`text-sm leading-snug ${
-                      isChecked ? "line-through opacity-80" : "font-medium"
+                    className={`text-xs leading-relaxed ${
+                      isChecked ? "line-through opacity-70" : "font-medium"
                     }`}
                   >
                     {action}
@@ -107,15 +103,15 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
         {/* Do's and Don'ts Comparison Grid */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Do's */}
-          <div className="rounded-xl border border-emerald-200/80 bg-emerald-50/40 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
-              <Check className="h-4 w-4 rounded-full bg-emerald-600 p-0.5 text-white" />
-              Do's (Best Practices)
+          <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
+              Approved Practices
             </h4>
-            <ul className="mt-3 space-y-2 text-xs text-slate-700 dark:text-slate-300">
+            <ul className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
               {knowledge.dos.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -123,15 +119,15 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
           </div>
 
           {/* Don'ts */}
-          <div className="rounded-xl border border-rose-200/80 bg-rose-50/40 p-4 dark:border-rose-900/40 dark:bg-rose-950/20">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-rose-800 dark:text-rose-300">
-              <X className="h-4 w-4 rounded-full bg-rose-600 p-0.5 text-white" />
-              Don'ts (Avoid Mistakes)
+          <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              <X className="h-4 w-4 text-rose-700 dark:text-rose-400" />
+              Prohibited Practices
             </h4>
-            <ul className="mt-3 space-y-2 text-xs text-slate-700 dark:text-slate-300">
+            <ul className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
               {knowledge.donts.map((item, idx) => (
                 <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-600 dark:bg-rose-400" />
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -140,33 +136,33 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
         </div>
 
         {/* Contamination Hazard Alert */}
-        <div className="flex items-start gap-3 rounded-xl border border-amber-300/80 bg-amber-50/70 p-4 text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
-          <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600 dark:text-amber-400" />
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/60 p-4 text-xs text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-200">
+          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-400" />
           <div className="space-y-1">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300">
-              Contamination & Environmental Hazards
+            <h4 className="font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300">
+              Contamination &amp; Hazard Advisory
             </h4>
-            <p className="text-xs leading-relaxed text-amber-800 dark:text-amber-200">
+            <p className="leading-relaxed text-amber-900/80 dark:text-amber-200/90">
               {knowledge.hazards}
             </p>
           </div>
         </div>
 
-        {/* Environmental Impact & Facts Card */}
-        <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-emerald-50/30 p-4 dark:border-slate-800 dark:from-slate-800/40 dark:to-emerald-950/20">
+        {/* Environmental Impact & Metrics Card */}
+        <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-slate-800/30">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-              <TreePine className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              Environmental Impact Metrics
+              <TrendingDown className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+              Environmental Metrics &amp; Circular Impact
             </span>
             <span className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <Clock className="h-3 w-3" /> Decomp: {knowledge.environmentalImpact.decompositionYears}
+              <Clock className="h-3 w-3" /> Decomposition: {knowledge.environmentalImpact.decompositionYears}
             </span>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded-lg border border-slate-200/80 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
-              <span className="text-lg font-extrabold text-emerald-600 dark:text-emerald-400">
+            <div className="rounded border border-slate-200 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
+              <span className="font-mono text-base font-bold text-slate-900 dark:text-white">
                 ~{knowledge.environmentalImpact.co2OffsetKg} kg
               </span>
               <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -174,8 +170,8 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
               </p>
             </div>
 
-            <div className="rounded-lg border border-slate-200/80 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
-              <span className="text-lg font-extrabold text-teal-600 dark:text-teal-400">
+            <div className="rounded border border-slate-200 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
+              <span className="font-mono text-base font-bold text-slate-900 dark:text-white">
                 {knowledge.environmentalImpact.landfillSpaceLiters} L
               </span>
               <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
@@ -183,19 +179,20 @@ export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
               </p>
             </div>
 
-            <div className="col-span-2 rounded-lg border border-slate-200/80 bg-white p-3 text-center sm:col-span-1 dark:border-slate-700 dark:bg-slate-800">
-              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
-                Circular Path
+            <div className="col-span-2 rounded border border-slate-200 bg-white p-3 text-center sm:col-span-1 dark:border-slate-700 dark:bg-slate-800">
+              <span className="text-xs font-bold text-slate-900 dark:text-white">
+                {knowledge.type.split("/")[0]}
               </span>
               <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                {knowledge.type.split("/")[0]}
+                Lifecycle Pathway
               </p>
             </div>
           </div>
 
-          {/* Eco Fact */}
-          <div className="mt-3 rounded-lg bg-emerald-100/50 p-3 text-xs text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200">
-            <span className="font-bold">Did you know?</span> {knowledge.environmentalImpact.fact}
+          {/* Fact note */}
+          <div className="mt-3 flex items-start gap-2 rounded border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+            <span>{knowledge.environmentalImpact.fact}</span>
           </div>
         </div>
       </div>

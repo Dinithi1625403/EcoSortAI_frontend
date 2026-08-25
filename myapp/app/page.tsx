@@ -119,7 +119,7 @@ export default function Home() {
       : undefined;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50/50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans">
       {/* Navigation Header */}
       <Navbar
         activeTab={activeTab}
@@ -131,16 +131,19 @@ export default function Home() {
         {/* TAB 1: IDENTIFY & SORT (Core Decision Support Flow) */}
         {activeTab === "classify" && (
           <div className="space-y-8 animate-fade-in">
-            {/* Hero Subtitle */}
+            {/* Header Title Section */}
             <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                <Sparkles className="h-3.5 w-3.5" /> AI-Powered Waste Classification &amp; Explainable Decision Support
+              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                AI Inference &amp; Explainable Decision Support Engine
               </div>
-              <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-                Intelligent Waste Sorting &amp; Action Recommendation
+              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
+                Intelligent Waste Stream Classification &amp; Protocol Advisory
               </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-                Upload or photograph any waste item. The system predicts the category, visually explains the AI reasoning with Grad-CAM saliency heatmaps, prescribes exact disposal actions, and locates local drop-off facilities.
+              <p className="mx-auto mt-2 max-w-2xl text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                Upload or capture any waste material. The neural network predicts the stream category,
+                provides Grad-CAM visual feature attribution, prescribes standard disposal protocols, and locates
+                open GIS collection nodes.
               </p>
             </div>
 
@@ -156,23 +159,23 @@ export default function Home() {
 
             {/* Loading Spinner */}
             {loading && (
-              <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-2xl border border-emerald-200/80 bg-emerald-50/70 p-8 text-center dark:border-emerald-900/50 dark:bg-emerald-950/40">
-                <Loader2 className="h-10 w-10 animate-spin text-emerald-600 dark:text-emerald-400" />
-                <h3 className="mt-4 text-base font-bold text-slate-900 dark:text-white">
+              <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-8 text-center shadow-xs dark:border-slate-800 dark:bg-slate-900">
+                <Loader2 className="h-8 w-8 animate-spin text-slate-700 dark:text-slate-300" />
+                <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
                   Executing CNN Inference &amp; Grad-CAM Computation...
                 </h3>
                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  Computing convolutional feature maps, backpropagating gradients, and retrieving disposal protocols.
+                  Calculating convolutional activation tensors and retrieving protocol models.
                 </p>
               </div>
             )}
 
             {/* Error Banner */}
             {errorMessage && (
-              <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-2xl border border-rose-300 bg-rose-50 p-5 text-rose-900 dark:border-rose-900/60 dark:bg-rose-950/50 dark:text-rose-200">
+              <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-xl border border-rose-200 bg-rose-50/70 p-4 text-rose-950 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-200">
                 <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
                 <div>
-                  <h4 className="text-sm font-bold">Prediction Request Failed</h4>
+                  <h4 className="text-xs font-bold uppercase tracking-wider">Inference Request Error</h4>
                   <p className="mt-1 text-xs leading-relaxed">{errorMessage}</p>
                 </div>
               </div>
@@ -206,26 +209,26 @@ export default function Home() {
                 )}
 
                 {/* Next Step Call to Action */}
-                <div className="flex flex-wrap items-center justify-between rounded-2xl border border-emerald-200 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-6 dark:border-emerald-900/50">
+                <div className="flex flex-wrap items-center justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-xs">
-                      <ShieldCheck className="h-6 w-6" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-white dark:bg-emerald-600">
+                      <ShieldCheck className="h-5 w-5" />
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                        Track Your Environmental Footprint
+                        Log Record in Environmental Audit Trail
                       </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">
-                        Log this classification session in your Personal Impact Tracker to monitor carbon savings and earn sustainability badges.
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Record this verified classification session in your personal waste accounting dashboard to track carbon savings.
                       </p>
                     </div>
                   </div>
 
                   <button
                     onClick={() => setActiveTab("dashboard")}
-                    className="mt-3 flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-md shadow-emerald-600/30 transition-all hover:bg-emerald-700 sm:mt-0"
+                    className="mt-3 flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 sm:mt-0"
                   >
-                    Open Eco-Tracker <ArrowRight className="h-4 w-4" />
+                    Open Audit Dashboard <ArrowRight className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>
@@ -237,14 +240,14 @@ export default function Home() {
         {activeTab === "locations" && (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300">
-                <MapPin className="h-3.5 w-3.5" /> Circular Waste Infrastructure
+              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <MapPin className="h-3.5 w-3.5" /> Geographic Information System
               </div>
-              <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
-                Verified Waste Disposal &amp; Collection Locator
+              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
+                Disposal Infrastructure &amp; Collection Point Locator
               </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-                Explore verified e-waste collection points, municipal recycling centers, donation bins, and community composting facilities in your area.
+              <p className="mx-auto mt-2 max-w-2xl text-xs text-slate-500 dark:text-slate-400">
+                Query verified e-waste collection points, municipal recycling centers, donation boxes, and organic composting drop-offs.
               </p>
             </div>
 
@@ -256,14 +259,14 @@ export default function Home() {
         {activeTab === "dashboard" && (
           <div className="space-y-6 animate-fade-in">
             <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 <Sparkles className="h-3.5 w-3.5" /> Personal Waste Accounting
               </div>
-              <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl text-slate-900 dark:text-white">
+              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
                 Personal Waste Management &amp; Impact Tracker
               </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-400">
-                Monitor your cumulative diversion metrics, estimated carbon offset, sustainability badges, and classification history.
+              <p className="mx-auto mt-2 max-w-2xl text-xs text-slate-500 dark:text-slate-400">
+                Monitor cumulative diversion metrics, estimated carbon abatement, compliance milestones, and audit history.
               </p>
             </div>
 
@@ -284,11 +287,11 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-slate-200/80 bg-white/60 py-6 text-center text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900/60 dark:text-slate-400">
+      <footer className="mt-auto border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 sm:flex-row sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} EcoSortAI — Smart Waste Management Decision Support System Using Explainable AI.</p>
-          <div className="flex items-center gap-4 text-xs">
-            <span className="font-semibold text-emerald-600 dark:text-emerald-400">Identify → Explain → Recommend → Locate → Track</span>
+          <div className="flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-300">
+            <span>Identify &rarr; Explain &rarr; Recommend &rarr; Locate &rarr; Track</span>
           </div>
         </div>
       </footer>

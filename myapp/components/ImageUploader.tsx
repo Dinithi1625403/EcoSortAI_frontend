@@ -1,7 +1,22 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { UploadCloud, Camera, RefreshCw, Sparkles, Image as ImageIcon } from "lucide-react";
+import {
+  Upload,
+  Camera,
+  RotateCcw,
+  Sparkles,
+  FileImage,
+  Battery,
+  Leaf,
+  Package,
+  Shirt,
+  Wine,
+  Footprints,
+  Trash2,
+  CircleDot,
+  FileText,
+} from "lucide-react";
 
 interface ImageUploaderProps {
   onFileSelected: (file: File) => void;
@@ -44,7 +59,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
-  // Helper to generate a sample canvas image for demo test presets
+  // Helper to generate benchmark canvas images for quick evaluator testing
   const handleQuickDemo = (label: string, primaryColor: string, detail: string) => {
     try {
       const canvas = document.createElement("canvas");
@@ -64,7 +79,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 400, 400);
 
-      // Main shape (safe across all browsers)
+      // Object box
       ctx.fillStyle = primaryColor;
       ctx.fillRect(80, 80, 240, 240);
 
@@ -72,7 +87,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
       ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
       ctx.fillRect(90, 90, 220, 220);
 
-      // Text
+      // Typography
       ctx.fillStyle = "#ffffff";
       ctx.font = "bold 24px sans-serif";
       ctx.textAlign = "center";
@@ -100,18 +115,29 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   };
 
+  const demoPresets = [
+    { label: "Plastic", name: "Plastic Bottle", color: "#0284c7", detail: "PET Container", icon: CircleDot },
+    { label: "Battery", name: "Battery Cell", color: "#dc2626", detail: "Lithium / AAA", icon: Battery },
+    { label: "Biological", name: "Organic Waste", color: "#16a34a", detail: "Food Scrap / Fruit", icon: Leaf },
+    { label: "Cardboard", name: "Cardboard Box", color: "#d97706", detail: "Corrugated Carton", icon: Package },
+    { label: "Glass", name: "Glass Jar", color: "#0891b2", detail: "Glass Container", icon: Wine },
+    { label: "Metal", name: "Metal Can", color: "#475569", detail: "Aluminum / Steel", icon: CircleDot },
+    { label: "Clothes", name: "Textiles", color: "#4f46e5", detail: "Cotton Apparel", icon: Shirt },
+    { label: "Shoes", name: "Footwear", color: "#7c3aed", detail: "Athletic Shoes", icon: Footprints },
+  ];
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-4">
       {/* Upload Dropzone */}
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed p-8 text-center transition-all duration-300 ${
+        className={`group relative flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-8 text-center transition-all ${
           isDragOver
-            ? "border-emerald-500 bg-emerald-50/70 shadow-lg shadow-emerald-500/10 dark:bg-emerald-950/30"
-            : "border-slate-300 bg-white/70 hover:border-emerald-400 hover:bg-slate-50/80 dark:border-slate-700 dark:bg-slate-800/60 dark:hover:border-emerald-500"
+            ? "border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/20"
+            : "border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50/50 dark:border-slate-700 dark:bg-slate-900/80 dark:hover:border-slate-600"
         } ${loading ? "pointer-events-none opacity-60" : ""}`}
       >
         <input
@@ -123,36 +149,36 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
           className="hidden"
         />
 
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner transition-transform group-hover:scale-110 dark:bg-emerald-950 dark:text-emerald-400">
-          <UploadCloud className="h-8 w-8" />
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+          <Upload className="h-6 w-6" />
         </div>
 
-        <h3 className="mt-4 text-base font-semibold text-slate-800 dark:text-slate-100">
-          Upload Waste Item Photo
+        <h3 className="mt-3 text-sm font-bold text-slate-900 dark:text-white">
+          Upload Waste Item for Inference
         </h3>
-        <p className="mt-1 max-w-sm text-sm text-slate-700 dark:text-slate-300">
-          Drag & drop an image here, or{" "}
-          <span className="font-medium text-emerald-600 underline dark:text-emerald-400">
-            browse from device / take camera photo
+        <p className="mt-1 max-w-sm text-xs text-slate-500 dark:text-slate-400">
+          Drag and drop an image file here, or{" "}
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+            browse from local files or capture via device camera
           </span>
         </p>
 
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-700 dark:text-slate-300">
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-700">
-            <Camera className="h-3.5 w-3.5" /> Mobile Camera Supported
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-50 px-2 py-0.5 dark:border-slate-800 dark:bg-slate-800">
+            <Camera className="h-3 w-3" /> Camera Enabled
           </span>
-          <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 dark:bg-slate-700">
-            <ImageIcon className="h-3.5 w-3.5" /> JPG, PNG, WEBP
+          <span className="inline-flex items-center gap-1 rounded border border-slate-200 bg-slate-50 px-2 py-0.5 dark:border-slate-800 dark:bg-slate-800">
+            <FileImage className="h-3 w-3" /> JPEG, PNG, WEBP
           </span>
         </div>
       </div>
 
-      {/* Quick Demo Test Presets */}
-      <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-900/50">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-500" />
-            Quick Demo Presets (Instant Model & XAI Test)
+      {/* Benchmark Presets Toolbar */}
+      <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900/80">
+        <div className="mb-2.5 flex items-center justify-between">
+          <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+            <Sparkles className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400" />
+            Evaluation Test Presets (Instant Model &amp; XAI Benchmark)
           </span>
           {hasResult && (
             <button
@@ -160,69 +186,28 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
                 e.stopPropagation();
                 onReset();
               }}
-              className="flex items-center gap-1 text-xs font-medium text-rose-600 hover:underline dark:text-rose-400"
+              className="flex items-center gap-1 text-xs font-semibold text-rose-700 hover:underline dark:text-rose-400"
             >
-              <RefreshCw className="h-3 w-3" /> Clear / Reset
+              <RotateCcw className="h-3 w-3" /> Clear Image
             </button>
           )}
         </div>
-        <div className="flex flex-wrap gap-1.5">
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Plastic", "#0284c7", "PET Beverage Bottle")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-emerald-400 hover:bg-emerald-50 hover:text-emerald-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            🧴 Plastic Bottle
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Battery", "#dc2626", "Lithium Cell / AAA")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-red-400 hover:bg-red-50 hover:text-red-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            🔋 Battery Cell
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Biological", "#16a34a", "Fruit Peel / Food Scrap")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-green-400 hover:bg-green-50 hover:text-green-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            🍎 Organic Apple
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Cardboard", "#d97706", "Shipping Parcel Box")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-amber-400 hover:bg-amber-50 hover:text-amber-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            📦 Cardboard Box
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Glass", "#0891b2", "Glass Condiment Jar")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-cyan-400 hover:bg-cyan-50 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            🫙 Glass Jar
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Metal", "#475569", "Aluminum Soda Can")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-slate-400 hover:bg-slate-100 hover:text-slate-800 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            🥫 Metal Can
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Clothes", "#4f46e5", "Cotton Apparel Shirt")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            👕 Clothes
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickDemo("Shoes", "#7c3aed", "Athletic Sneaker Pair")}
-            className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-700 shadow-xs hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-          >
-            👟 Shoes
-          </button>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {demoPresets.map((preset) => {
+            const Icon = preset.icon;
+            return (
+              <button
+                key={preset.label}
+                type="button"
+                onClick={() => handleQuickDemo(preset.label, preset.color, preset.detail)}
+                className="flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-xs font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/60 dark:text-slate-200 dark:hover:bg-slate-800"
+              >
+                <Icon className="h-4 w-4 shrink-0 text-slate-600 dark:text-slate-400" />
+                <span className="truncate">{preset.name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

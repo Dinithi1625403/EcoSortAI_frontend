@@ -6,9 +6,9 @@ import {
   Eye,
   HelpCircle,
   Activity,
-  CheckCircle,
-  AlertCircle,
+  CheckCircle2,
   Sliders,
+  Sparkles,
 } from "lucide-react";
 
 interface GradCamViewerProps {
@@ -30,55 +30,50 @@ export const GradCamViewer: React.FC<GradCamViewerProps> = ({
     : null;
 
   const isSure = result.sure;
-  const focusNote = isSure
-    ? result.focus_note
-    : result.message;
+  const focusNote = isSure ? result.focus_note : result.message;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/90 shadow-xl shadow-slate-200/40 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-none">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-100 bg-slate-50/70 px-6 py-4 dark:border-slate-800/80 dark:bg-slate-800/50">
+      <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-800/40">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-600 text-white shadow-xs">
-            <Eye className="h-4 w-4" />
+          <span className="flex h-6 w-6 items-center justify-center rounded bg-slate-900 text-white dark:bg-teal-600">
+            <Eye className="h-3.5 w-3.5" />
           </span>
           <div>
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
-              🔍 Step 2: Explainable AI (XAI) — Grad-CAM Visual Evidence
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              Stage 2: Explainable AI (XAI) — Grad-CAM Feature Attribution
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Gradient-weighted Class Activation Mapping revealing CNN spatial reasoning
-            </p>
           </div>
         </div>
 
         {/* View Mode Switcher */}
-        <div className="mt-2 flex rounded-lg bg-slate-200/80 p-1 dark:bg-slate-800 sm:mt-0">
+        <div className="mt-2 flex rounded-md bg-slate-200/80 p-0.5 dark:bg-slate-800 sm:mt-0">
           <button
             onClick={() => setViewMode("overlay")}
-            className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-all ${
+            className={`rounded px-2.5 py-1 text-xs font-semibold transition-all ${
               viewMode === "overlay"
-                ? "bg-white text-teal-700 shadow-xs dark:bg-slate-700 dark:text-teal-300"
+                ? "bg-white text-slate-900 shadow-xs dark:bg-slate-700 dark:text-white"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
-            Overlay
+            Overlay Map
           </button>
           <button
             onClick={() => setViewMode("original")}
-            className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-all ${
+            className={`rounded px-2.5 py-1 text-xs font-semibold transition-all ${
               viewMode === "original"
-                ? "bg-white text-teal-700 shadow-xs dark:bg-slate-700 dark:text-teal-300"
+                ? "bg-white text-slate-900 shadow-xs dark:bg-slate-700 dark:text-white"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
-            Original
+            Source Image
           </button>
           <button
             onClick={() => setViewMode("split")}
-            className={`rounded-md px-2.5 py-1 text-xs font-semibold transition-all ${
+            className={`rounded px-2.5 py-1 text-xs font-semibold transition-all ${
               viewMode === "split"
-                ? "bg-white text-teal-700 shadow-xs dark:bg-slate-700 dark:text-teal-300"
+                ? "bg-white text-slate-900 shadow-xs dark:bg-slate-700 dark:text-white"
                 : "text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             }`}
           >
@@ -89,10 +84,10 @@ export const GradCamViewer: React.FC<GradCamViewerProps> = ({
 
       <div className="p-6">
         {/* Visual Inspection Area */}
-        <div className="overflow-hidden rounded-xl border border-slate-200 bg-slate-950 p-2 dark:border-slate-800">
+        <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-950 p-2 dark:border-slate-800">
           {viewMode === "split" ? (
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <div className="relative overflow-hidden rounded-lg bg-slate-900">
+              <div className="relative overflow-hidden rounded bg-slate-900">
                 {originalPreview && (
                   <img
                     src={originalPreview}
@@ -100,11 +95,11 @@ export const GradCamViewer: React.FC<GradCamViewerProps> = ({
                     className="aspect-square w-full object-contain"
                   />
                 )}
-                <span className="absolute bottom-2 left-2 rounded-md bg-black/75 px-2 py-0.5 text-[11px] font-semibold text-white">
-                  Original Photo
+                <span className="absolute bottom-2 left-2 rounded bg-black/75 px-2 py-0.5 text-[10px] font-semibold text-white">
+                  Source Input
                 </span>
               </div>
-              <div className="relative overflow-hidden rounded-lg bg-slate-900">
+              <div className="relative overflow-hidden rounded bg-slate-900">
                 {heatmapBase64 ? (
                   <img
                     src={heatmapBase64}
@@ -113,99 +108,98 @@ export const GradCamViewer: React.FC<GradCamViewerProps> = ({
                   />
                 ) : (
                   <div className="flex aspect-square items-center justify-center text-xs text-slate-400">
-                    No heatmap generated
+                    No activation heatmap generated
                   </div>
                 )}
-                <span className="absolute bottom-2 left-2 rounded-md bg-teal-900/90 px-2 py-0.5 text-[11px] font-semibold text-teal-200">
-                  Grad-CAM Attention Map
+                <span className="absolute bottom-2 left-2 rounded bg-slate-900/90 px-2 py-0.5 text-[10px] font-semibold text-teal-300">
+                  Grad-CAM Activation Map
                 </span>
               </div>
             </div>
           ) : (
-            <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-lg bg-slate-900">
+            <div className="relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded bg-slate-900">
               {viewMode === "overlay" && heatmapBase64 && (
                 <img
                   src={heatmapBase64}
                   alt="Grad-CAM Overlay"
-                  className="max-h-[420px] w-auto max-w-full rounded-lg object-contain"
+                  className="max-h-[420px] w-auto max-w-full rounded object-contain"
                 />
               )}
               {viewMode === "original" && originalPreview && (
                 <img
                   src={originalPreview}
                   alt="Original Image"
-                  className="max-h-[420px] w-auto max-w-full rounded-lg object-contain"
+                  className="max-h-[420px] w-auto max-w-full rounded object-contain"
                 />
               )}
-              <span className="absolute bottom-3 left-3 rounded-md bg-black/70 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur-xs">
+              <span className="absolute bottom-3 left-3 rounded bg-black/70 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-xs">
                 {viewMode === "overlay"
-                  ? "Grad-CAM Activation Heatmap Overlay (Jet Colormap)"
-                  : "Original Captured Image"}
+                  ? "Grad-CAM Saliency Overlay (Alpha-blended Jet Colormap)"
+                  : "Original Input Photo"}
               </span>
             </div>
           )}
         </div>
 
         {/* Heatmap Legend Bar */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/80 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-800/40">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 dark:border-slate-800 dark:bg-slate-800/40">
           <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
-            <span>Low Relevance</span>
-            <div className="h-3.5 w-32 rounded-sm bg-gradient-to-r from-blue-600 via-cyan-400 via-yellow-400 to-red-600 shadow-inner" />
-            <span>Peak Activation (High Influence)</span>
+            <span>Low Activation</span>
+            <div className="h-3 w-28 rounded-xs bg-gradient-to-r from-blue-600 via-cyan-400 via-yellow-400 to-red-600 shadow-inner" />
+            <span>Peak Feature Activation (High Saliency)</span>
           </div>
           <div className="text-[11px] text-slate-500 dark:text-slate-400">
-            Alpha Blended (40% Jet intensity on source)
+            Final Conv2D Layer Backpropagation
           </div>
         </div>
 
         {/* Layman & Decision Support Explanation */}
         <div className="mt-5 space-y-3">
-          <div className="rounded-xl border border-teal-100 bg-teal-50/70 p-4 dark:border-teal-950 dark:bg-teal-950/30">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-teal-900 dark:text-teal-300">
-              <HelpCircle className="h-4 w-4 text-teal-600 dark:text-teal-400" />
-              Why Did The AI Make This Prediction?
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
+            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              <HelpCircle className="h-4 w-4 text-slate-600 dark:text-slate-400" />
+              Explainable Decision Support Rationale
             </h4>
-            <p className="mt-2 text-sm leading-relaxed text-teal-950 dark:text-teal-100">
-              The neural network computes gradients flowing from the final convolutional feature
-              maps. The <strong className="text-red-600 dark:text-red-400">red and yellow glowing regions</strong>{" "}
-              indicate the specific visual patterns (such as edges, material reflectivity, bottle necks,
-              terminal poles, or organic textures) that most heavily influenced the classification.
+            <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
+              The highlighted warm regions (red, orange, yellow) indicate the specific spatial feature
+              boundaries—such as edges, textures, contours, or structural geometry—that yielded the
+              strongest positive gradient activations toward the predicted class.
             </p>
             {focusNote && (
-              <div className="mt-3 rounded-lg bg-white/80 p-3 text-xs font-medium text-slate-700 dark:bg-slate-900/80 dark:text-slate-200">
-                <span className="font-bold text-teal-700 dark:text-teal-400">Spatial Attention Assessment:</span>{" "}
+              <div className="mt-3 rounded border border-slate-200 bg-white p-3 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300">
+                <span className="font-bold text-slate-900 dark:text-white">Spatial Quality Assessment:</span>{" "}
                 {focusNote}
               </div>
             )}
           </div>
 
-          {/* Saliency Quality Metrics & Technical Toggle */}
+          {/* Saliency Diagnostics Toggle */}
           <div className="flex items-center justify-between pt-1">
             <button
               onClick={() => setShowTechnicalDetails(!showTechnicalDetails)}
               className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
             >
               <Sliders className="h-3.5 w-3.5" />
-              {showTechnicalDetails ? "Hide Saliency Math & Diagnostics" : "View CNN Saliency Diagnostics"}
+              {showTechnicalDetails ? "Hide Saliency Diagnostics" : "Show Saliency Diagnostics & Metrics"}
             </button>
           </div>
 
           {showTechnicalDetails && (
-            <div className="grid grid-cols-1 gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 text-xs dark:border-slate-800 dark:bg-slate-900/60 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs dark:border-slate-800 dark:bg-slate-900/60 sm:grid-cols-2">
               <div className="space-y-1">
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                  Convolutional Layer Target
+                  Target Conv2D Layer
                 </span>
                 <p className="font-mono text-slate-500 dark:text-slate-400">
-                  Last Conv2D Layer (Spatial Saliency Extraction)
+                  Final Conv2D (Spatial Saliency Extraction)
                 </p>
               </div>
               <div className="space-y-1">
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                  Attention Focus Quality
+                  Centricity Verification
                 </span>
-                <div className="flex items-center gap-1.5 font-medium text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle className="h-3.5 w-3.5" /> Object Centricity Verified
+                <div className="flex items-center gap-1.5 font-medium text-emerald-700 dark:text-emerald-400">
+                  <CheckCircle2 className="h-3.5 w-3.5" /> Focal Point Verified
                 </div>
               </div>
               {result.debug && (
@@ -215,12 +209,12 @@ export const GradCamViewer: React.FC<GradCamViewerProps> = ({
                       Edge Share Ratio
                     </span>
                     <p className="font-mono text-slate-500 dark:text-slate-400">
-                      {result.debug.edge} (Background threshold &lt; 0.45)
+                      {result.debug.edge} (Standard threshold &lt; 0.45)
                     </p>
                   </div>
                   <div className="space-y-1">
                     <span className="font-semibold text-slate-700 dark:text-slate-300">
-                      Activation Spread
+                      Activation Spread Index
                     </span>
                     <p className="font-mono text-slate-500 dark:text-slate-400">
                       {result.debug.spread} (Clutter threshold &lt; 0.55)

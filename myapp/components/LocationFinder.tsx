@@ -20,6 +20,7 @@ import {
   Loader2,
   Globe,
   Radio,
+  Layers,
 } from "lucide-react";
 
 interface LocationFinderProps {
@@ -39,7 +40,7 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<"live_osm" | "verified_repo">("verified_repo");
   const [searchQuery, setSearchQuery] = useState("");
-  const [locationLabel, setLocationLabel] = useState<string>("Default Metro Area");
+  const [locationLabel, setLocationLabel] = useState<string>("Standard Reference Grid");
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [radiusKm, setRadiusKm] = useState<number>(10);
 
@@ -145,7 +146,7 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
         setDataSource("verified_repo");
       }
     } else {
-      alert(`Could not find coordinates for "${searchQuery}".`);
+      alert(`Could not resolve coordinates for "${searchQuery}".`);
     }
     setLoading(false);
   };
@@ -196,40 +197,37 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
   const activeLoc = selectedLocation || locations[0];
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/90 shadow-xl shadow-slate-200/40 backdrop-blur-sm dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-none">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
       {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-100 bg-slate-50/70 px-6 py-4 dark:border-slate-800/80 dark:bg-slate-800/50">
+      <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-800/40">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-xs">
-            <MapPin className="h-4 w-4" />
+          <span className="flex h-6 w-6 items-center justify-center rounded bg-slate-900 text-white dark:bg-indigo-600">
+            <MapPin className="h-3.5 w-3.5" />
           </span>
           <div>
-            <h2 className="text-base font-bold text-slate-800 dark:text-slate-100">
-              📍 Step 4: Decision Support — Where to Dispose &amp; Drop-Off Points
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+              Stage 4: Decision Support — Disposal &amp; Collection Point Locator
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Real-world open GIS directory and municipal disposal points matching the identified waste
-            </p>
           </div>
         </div>
 
         {/* Live Data Badge */}
         <div className="mt-2 flex items-center gap-1.5 sm:mt-0">
           <span
-            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${
+            className={`inline-flex items-center gap-1.5 rounded border px-2.5 py-1 text-xs font-semibold ${
               dataSource === "live_osm"
-                ? "bg-emerald-100 text-emerald-800 border border-emerald-300 dark:bg-emerald-950 dark:text-emerald-300"
-                : "bg-indigo-100 text-indigo-800 border border-indigo-300 dark:bg-indigo-950 dark:text-indigo-300"
+                ? "bg-emerald-50 text-emerald-800 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-900"
+                : "bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
             }`}
           >
             {dataSource === "live_osm" ? (
               <>
-                <Radio className="h-3 w-3 animate-pulse text-emerald-600" />
-                Live OpenStreetMap (OSM) Data
+                <Radio className="h-3.5 w-3.5 text-emerald-700 dark:text-emerald-400" />
+                Live OpenStreetMap (OSM) GIS
               </>
             ) : (
               <>
-                <Globe className="h-3 w-3 text-indigo-600" />
+                <Globe className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400" />
                 Verified Municipal Repository
               </>
             )}
@@ -244,14 +242,14 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
           <button
             onClick={handleDetectLocation}
             disabled={loading}
-            className="flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm shadow-indigo-600/20 transition-all hover:bg-indigo-700 active:scale-98 sm:col-span-4"
+            className="flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition-colors hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-700 sm:col-span-4"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <LocateFixed className="h-4 w-4" />
             )}
-            Use My Current GPS Location
+            Detect Current Coordinates
           </button>
 
           {/* City / Area Search Bar */}
@@ -265,27 +263,27 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search city, district, or postal code (e.g. London, Tokyo, Berlin, Austin)..."
-                className="w-full rounded-xl border border-slate-200 bg-slate-50/80 py-2 pl-9 pr-4 text-xs font-medium text-slate-900 transition-all focus:border-indigo-500 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                placeholder="Search municipality, district, or postal code..."
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 pl-9 pr-4 text-xs font-medium text-slate-900 transition-colors focus:border-slate-400 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 shadow-xs hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
             >
               Search
             </button>
           </form>
         </div>
 
-        {/* Current Active Location Info Banner */}
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-2 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400">
+        {/* Active Region & Radius Banner */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-xs text-slate-600 dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-400">
           <div>
-            <span className="font-semibold text-slate-900 dark:text-white">Active Region:</span> {locationLabel}
+            <span className="font-semibold text-slate-900 dark:text-white">Active Geographic Area:</span> {locationLabel}
           </div>
           <div className="flex items-center gap-2">
-            <span>Radius:</span>
+            <span>Query Radius:</span>
             {[5, 10, 25].map((r) => (
               <button
                 key={r}
@@ -305,9 +303,9 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                     });
                   }
                 }}
-                className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
+                className={`rounded px-2 py-0.5 text-[11px] font-semibold ${
                   radiusKm === r
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-slate-900 text-white dark:bg-indigo-600"
                     : "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300"
                 }`}
               >
@@ -317,10 +315,10 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
           </div>
         </div>
 
-        {/* Category Filter Pills */}
+        {/* Category Filter Toolbar */}
         <div className="mb-6 flex flex-wrap items-center gap-1.5">
           <span className="mr-1 flex items-center gap-1 text-xs font-bold text-slate-500 dark:text-slate-400">
-            <Filter className="h-3 w-3" /> Filter by Type:
+            <Filter className="h-3 w-3" /> Waste Stream:
           </span>
           {[
             "all",
@@ -338,29 +336,29 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
             <button
               key={cat}
               onClick={() => handleCategoryFilter(cat)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-medium capitalize transition-all ${
+              className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize transition-colors ${
                 selectedCategoryFilter === cat
-                  ? "bg-indigo-600 text-white shadow-xs"
-                  : "border border-slate-200 bg-slate-100/80 text-slate-700 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  ? "bg-slate-900 text-white dark:bg-indigo-600"
+                  : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-800 dark:text-slate-300"
               }`}
             >
-              {cat === "all" ? "All Types" : cat}
+              {cat === "all" ? "All Categories" : cat}
             </button>
           ))}
         </div>
 
-        {/* Map & Facility Directory Layout */}
+        {/* Facility Directory Layout */}
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Facility List (Left 7 Cols) */}
           <div className="space-y-3 lg:col-span-7">
             {loading ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200 p-12 text-center text-xs text-slate-500 dark:border-slate-800">
-                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
-                <p className="mt-2 font-medium">Querying OpenStreetMap GIS nodes...</p>
+              <div className="flex flex-col items-center justify-center rounded-lg border border-slate-200 p-12 text-center text-xs text-slate-500 dark:border-slate-800">
+                <Loader2 className="h-6 w-6 animate-spin text-slate-700 dark:text-slate-300" />
+                <p className="mt-2 font-medium">Querying Geographic Information System (GIS) Nodes...</p>
               </div>
             ) : locations.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-sm text-slate-500 dark:border-slate-700 dark:text-slate-400">
-                No active disposal locations found for this filter in the current radius. Try expanding the radius or switching waste categories.
+              <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                No active disposal locations found for this filter within {radiusKm} km.
               </div>
             ) : (
               locations.map((loc) => {
@@ -372,10 +370,10 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                   <div
                     key={loc.id}
                     onClick={() => setSelectedLocation(loc)}
-                    className={`cursor-pointer rounded-xl border p-4 transition-all ${
+                    className={`cursor-pointer rounded-lg border p-4 transition-colors ${
                       isSelected
-                        ? "border-indigo-500 bg-indigo-50/60 shadow-md shadow-indigo-500/10 dark:border-indigo-500 dark:bg-indigo-950/40"
-                        : "border-slate-200 bg-slate-50/60 hover:border-slate-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/40 dark:hover:bg-slate-800"
+                        ? "border-slate-900 bg-slate-50 dark:border-indigo-500 dark:bg-slate-800/80"
+                        : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50 dark:border-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800/40"
                     }`}
                   >
                     <div className="flex items-start justify-between">
@@ -385,8 +383,8 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                             {loc.name}
                           </h4>
                           {matchesCurrent && (
-                            <span className="flex items-center gap-1 rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                              <CheckCircle2 className="h-3 w-3" /> Recommended
+                            <span className="flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                              <CheckCircle2 className="h-3 w-3" /> Recommended Node
                             </span>
                           )}
                         </div>
@@ -395,7 +393,7 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                         </p>
                       </div>
 
-                      <span className="rounded-full bg-slate-200/80 px-2.5 py-0.5 text-xs font-bold text-slate-700 dark:bg-slate-700 dark:text-slate-300">
+                      <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
                         {loc.distanceKm} km
                       </span>
                     </div>
@@ -412,11 +410,11 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                     </div>
 
                     <div className="mt-2.5 flex flex-wrap items-center gap-1">
-                      <span className="text-[11px] font-medium text-slate-400">Materials:</span>
+                      <span className="text-[11px] font-medium text-slate-400">Accepted Streams:</span>
                       {loc.acceptedCategories.map((cat) => (
                         <span
                           key={cat}
-                          className="rounded bg-slate-200/60 px-1.5 py-0.5 text-[10px] font-medium uppercase text-slate-700 dark:bg-slate-700 dark:text-slate-300"
+                          className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium uppercase text-slate-700 dark:bg-slate-800 dark:text-slate-300"
                         >
                           {cat}
                         </span>
@@ -428,37 +426,35 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
             )}
           </div>
 
-          {/* Interactive Visual Map View (Right 5 Cols) */}
+          {/* Interactive GIS Display (Right 5 Cols) */}
           {activeLoc && (
-            <div className="flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200 bg-slate-900 p-4 text-white dark:border-slate-800 lg:col-span-5">
+            <div className="flex flex-col justify-between overflow-hidden rounded-lg border border-slate-200 bg-slate-900 p-4 text-white dark:border-slate-800 lg:col-span-5">
               <div>
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                  <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-400">
-                    <Navigation className="h-3.5 w-3.5" /> Interactive GIS View
+                  <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300">
+                    <Navigation className="h-3.5 w-3.5 text-slate-400" /> GIS Coordinates
                   </span>
-                  <span className="text-[11px] font-mono text-slate-400">
+                  <span className="font-mono text-[11px] text-slate-400">
                     {activeLoc.coordinates.lat.toFixed(4)}°, {activeLoc.coordinates.lng.toFixed(4)}°
                   </span>
                 </div>
 
-                {/* Styled GIS Radar / Grid Map View */}
-                <div className="relative mt-3 flex h-48 w-full items-center justify-center overflow-hidden rounded-lg bg-slate-950">
+                {/* Structured GIS View */}
+                <div className="relative mt-3 flex h-44 w-full items-center justify-center overflow-hidden rounded bg-slate-950">
                   <div
-                    className="absolute inset-0 opacity-20"
+                    className="absolute inset-0 opacity-15"
                     style={{
                       backgroundImage:
-                        "linear-gradient(#6366f1 1px, transparent 1px), linear-gradient(90deg, #6366f1 1px, transparent 1px)",
-                      backgroundSize: "24px 24px",
+                        "linear-gradient(#94a3b8 1px, transparent 1px), linear-gradient(90deg, #94a3b8 1px, transparent 1px)",
+                      backgroundSize: "20px 20px",
                     }}
                   />
 
-                  <div className="absolute h-36 w-36 rounded-full border border-indigo-500/30 bg-indigo-500/5 animate-ping opacity-75" />
-
                   <div className="relative flex flex-col items-center">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg shadow-indigo-500/50">
-                      <MapPin className="h-5 w-5" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-800 text-white border border-slate-600">
+                      <MapPin className="h-4 w-4" />
                     </div>
-                    <span className="mt-1 max-w-[200px] truncate rounded bg-black/80 px-2 py-0.5 text-[11px] font-bold text-indigo-300 backdrop-blur-xs">
+                    <span className="mt-1.5 max-w-[200px] truncate rounded bg-black/80 px-2 py-0.5 font-mono text-[11px] font-bold text-slate-200">
                       {activeLoc.name} ({activeLoc.distanceKm} km)
                     </span>
                   </div>
@@ -468,22 +464,22 @@ export const LocationFinder: React.FC<LocationFinderProps> = ({
                 <div className="mt-4 space-y-2 text-xs">
                   <div className="font-bold text-white">{activeLoc.name}</div>
                   <p className="text-slate-300">{activeLoc.notes}</p>
-                  <div className="rounded bg-slate-800/80 p-2.5 text-slate-300">
+                  <div className="rounded border border-slate-800 bg-slate-950 p-2.5 text-slate-300">
                     <span className="font-semibold text-slate-200">Address:</span> {activeLoc.address}
                   </div>
                 </div>
               </div>
 
-              {/* External Google Maps / OSM Directions Link */}
+              {/* External Navigation Link */}
               <div className="mt-4 pt-3">
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${activeLoc.coordinates.lat},${activeLoc.coordinates.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-xs font-bold text-white shadow-md shadow-indigo-600/30 transition-all hover:bg-indigo-500 active:scale-98"
+                  className="flex w-full items-center justify-center gap-2 rounded-md bg-white py-2 text-xs font-bold text-slate-900 transition-colors hover:bg-slate-100"
                 >
                   <ExternalLink className="h-3.5 w-3.5" />
-                  Get Exact Directions in Google Maps
+                  Open Navigation in Google Maps
                 </a>
               </div>
             </div>
