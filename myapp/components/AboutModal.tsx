@@ -1,170 +1,156 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import Image from "next/image";
+import { WASTE_KNOWLEDGE_BASE } from "@/data/wasteKnowledgeBase";
+import { WasteCategory } from "@/types/waste";
 import {
   Sparkles,
   Layers,
-  BrainCircuit,
-  Eye,
   CheckCircle2,
-  BookOpen,
-  Battery,
-  Leaf,
-  Package,
-  Shirt,
-  Wine,
-  CircleDot,
-  FileText,
-  Footprints,
-  Trash2,
+  Cpu,
+  Eye,
+  Recycle,
+  HelpCircle,
 } from "lucide-react";
 
 export const AboutModal: React.FC = () => {
-  const categoryList = [
-    { name: "Battery", type: "Hazardous Stream", icon: Battery },
-    { name: "Biological", type: "Organic Compost", icon: Leaf },
-    { name: "Cardboard", type: "Pulp Recyclable", icon: Package },
-    { name: "Clothes", type: "Textile Reusable", icon: Shirt },
-    { name: "Glass", type: "Inorganic Recyclable", icon: Wine },
-    { name: "Metal", type: "Ferrous / Non-Ferrous", icon: CircleDot },
-    { name: "Paper", type: "Cellulose Recyclable", icon: FileText },
-    { name: "Plastic", type: "Polymer Recyclable", icon: CircleDot },
-    { name: "Shoes", type: "Footwear Reusable", icon: Footprints },
-    { name: "Trash", type: "Residual Landfill", icon: Trash2 },
-  ];
+  const [selectedCategory, setSelectedCategory] = useState<WasteCategory>("plastic");
+
+  const categories = Object.keys(WASTE_KNOWLEDGE_BASE) as WasteCategory[];
+  const activeKnowledge = WASTE_KNOWLEDGE_BASE[selectedCategory];
 
   return (
-    <div className="space-y-6">
-      {/* Hero Overview */}
-      <div className="rounded-xl border border-slate-200 bg-slate-900 p-8 text-white shadow-xs dark:border-slate-800">
-        <div className="inline-flex items-center gap-2 rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-xs font-semibold text-slate-200">
-          <Sparkles className="h-3.5 w-3.5" /> University Capstone Architecture
-        </div>
-        <h2 className="mt-4 text-2xl font-bold tracking-tight">
-          Smart Waste Management Decision Support System
-        </h2>
-        <p className="mt-2 max-w-2xl text-xs leading-relaxed text-slate-300">
-          An integrated computational framework combining Convolutional Neural Networks (CNN),
-          Explainable AI (Grad-CAM), Structured Knowledge Engineering, and Geographic Information
-          Systems (GIS) to resolve urban waste sorting, cross-contamination, and circular disposal.
-        </p>
+    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in">
+      {/* Cute Hero Section */}
+      <div className="card-cute p-6 bg-gradient-to-r from-emerald-50 via-teal-50/40 to-white overflow-hidden relative">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="relative h-32 w-32 md:h-40 md:w-40 shrink-0 rounded-3xl overflow-hidden shadow-md border-2 border-emerald-200">
+            <Image
+              src="/images/cute_eco_mascot.jpg"
+              alt="Eco Mascot"
+              fill
+              className="object-cover"
+            />
+          </div>
 
-        {/* Workflow Diagram */}
-        <div className="mt-6 flex flex-wrap items-center gap-2 font-mono text-xs">
-          <span className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-200">1. Identify (CNN)</span>
-          <span className="text-slate-500">&rarr;</span>
-          <span className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-200">2. Explain (Grad-CAM)</span>
-          <span className="text-slate-500">&rarr;</span>
-          <span className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-200">3. Recommend (Protocol)</span>
-          <span className="text-slate-500">&rarr;</span>
-          <span className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-200">4. Locate (GIS Points)</span>
-          <span className="text-slate-500">&rarr;</span>
-          <span className="rounded border border-slate-700 bg-slate-800 px-2.5 py-1 text-slate-200">5. Track (Audit)</span>
+          <div className="space-y-2 text-center md:text-left flex-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/80 border border-emerald-200 px-3 py-0.5 text-xs font-extrabold text-emerald-800">
+              <Sparkles className="h-3 w-3" /> Explainable Decision Support System
+            </div>
+            <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight">
+              Meet EcoSort<span className="text-emerald-600">AI</span> Assistant
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-600 leading-relaxed max-w-2xl">
+              EcoSortAI uses a Convolutional Neural Network (CNN) trained on thousands of waste items paired with <strong>Grad-CAM Explainable AI</strong> to demystify how predictions are formed and guide users on responsible disposal.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* 3 Pillars Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-        {/* Pillar 1: AI Model */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-9 w-9 items-center justify-center rounded bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-            <BrainCircuit className="h-5 w-5" />
+      {/* 3 Step Architecture */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="card-cute p-4 space-y-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold">
+            <Cpu className="h-5 w-5" />
           </div>
-          <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
-            Convolutional Classification
-          </h3>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Trained on the Garbage Classification V2 dataset across 10 material classes:
-            Battery, Biological, Cardboard, Clothes, Glass, Metal, Paper, Plastic, Shoes, and Trash.
+          <h3 className="text-sm font-bold text-gray-900">1. Visual Feature Extraction</h3>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Deep convolutional filters examine shape, edge reflectivity, texture, and container contours across 10 classes.
           </p>
-          <ul className="mt-4 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Multi-class Softmax Probability
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Multi-tier Confidence Thresholding
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Runner-up Margin Disambiguation
-            </li>
-          </ul>
         </div>
 
-        {/* Pillar 2: Explainable AI (XAI) */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-9 w-9 items-center justify-center rounded bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+        <div className="card-cute p-4 space-y-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold">
             <Eye className="h-5 w-5" />
           </div>
-          <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
-            Explainable AI (Grad-CAM)
-          </h3>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Gradient-weighted Class Activation Mapping calculates gradients flowing from final
-            convolutional feature maps to illuminate spatial decision boundaries.
+          <h3 className="text-sm font-bold text-gray-900">2. Grad-CAM Attribution</h3>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Gradients flow back to spatial activation layers to render glowing saliency heatmaps on the original image.
           </p>
-          <ul className="mt-4 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Visual Saliency Feature Heatmaps
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Edge &amp; Spread Quality Indexing
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Transparent Model Auditing
-            </li>
-          </ul>
         </div>
 
-        {/* Pillar 3: Decision Engine */}
-        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-          <div className="flex h-9 w-9 items-center justify-center rounded bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
-            <BookOpen className="h-5 w-5" />
+        <div className="card-cute p-4 space-y-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold">
+            <Recycle className="h-5 w-5" />
           </div>
-          <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
-            Decision Support System
-          </h3>
-          <p className="mt-2 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Translates probabilistic predictions into civic actions: color-coded bin assignments,
-            step-by-step preparation protocols, contamination prevention, and GIS locator.
+          <h3 className="text-sm font-bold text-gray-900">3. Protocol Advisory</h3>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            Prescribes validated disposal streams, safety preparation, and links to verified nearby drop-offs.
           </p>
-          <ul className="mt-4 space-y-1.5 text-xs text-slate-700 dark:text-slate-300">
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> 10 Structured Knowledge Models
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> OpenStreetMap GIS Facility Query
-            </li>
-            <li className="flex items-center gap-1.5">
-              <CheckCircle2 className="h-3.5 w-3.5 text-slate-500" /> Carbon Offset &amp; Audit Logger
-            </li>
-          </ul>
         </div>
       </div>
 
-      {/* 10 Supported Categories Reference Table */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs dark:border-slate-800 dark:bg-slate-900">
-        <div className="border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-800/40">
-          <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-            <Layers className="h-4 w-4 text-slate-600" />
-            10 Supported Waste Classification Categories
-          </h3>
+      {/* Interactive 10 Waste Categories Guide */}
+      <div className="card-cute overflow-hidden">
+        <div className="card-cute-header">
+          <h3 className="text-sm font-bold text-gray-900">Interactive 10-Category Waste Encyclopedia</h3>
+          <p className="text-xs text-gray-500">Click any category chip below to inspect disposal rules</p>
         </div>
-        <div className="grid grid-cols-2 gap-3 p-6 sm:grid-cols-5 text-xs">
-          {categoryList.map((cat) => {
-            const Icon = cat.icon;
-            return (
-              <div
-                key={cat.name}
-                className="rounded-lg border border-slate-200 bg-slate-50/60 p-3.5 text-center dark:border-slate-800 dark:bg-slate-800/40"
-              >
-                <div className="mx-auto flex h-8 w-8 items-center justify-center rounded bg-white text-slate-700 shadow-xs dark:bg-slate-700 dark:text-slate-200">
-                  <Icon className="h-4 w-4" />
+
+        <div className="p-4 sm:p-5 space-y-4">
+          {/* Category Chips */}
+          <div className="flex flex-wrap gap-1.5">
+            {categories.map((cat) => {
+              const item = WASTE_KNOWLEDGE_BASE[cat];
+              const isSel = selectedCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={`rounded-full px-3 py-1 text-xs font-bold transition-all duration-150 capitalize ${
+                    isSel
+                      ? "bg-emerald-600 text-white shadow-xs scale-105"
+                      : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-100"
+                  }`}
+                >
+                  {item.name.split(" ")[0]}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Category Detail */}
+          {activeKnowledge && (
+            <div className="rounded-2xl bg-emerald-50/60 border border-emerald-200/70 p-4 space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-wide text-emerald-700">
+                    {activeKnowledge.type}
+                  </span>
+                  <h4 className="text-base font-extrabold text-gray-900">
+                    {activeKnowledge.name}
+                  </h4>
                 </div>
-                <div className="mt-2 font-bold text-slate-900 dark:text-white">{cat.name}</div>
-                <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400">{cat.type}</div>
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-extrabold text-emerald-800 border border-emerald-200 shadow-2xs">
+                  {activeKnowledge.colorClass.binName}
+                </span>
               </div>
-            );
-          })}
+
+              <p className="text-xs text-gray-700 leading-relaxed">
+                {activeKnowledge.summary}
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 text-xs">
+                <div className="bg-white/80 rounded-xl p-2.5 border border-emerald-100">
+                  <span className="font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-600" /> Key Action:
+                  </span>
+                  <p className="text-gray-600 text-[11px] leading-relaxed">
+                    {activeKnowledge.actions[0]}
+                  </p>
+                </div>
+                <div className="bg-white/80 rounded-xl p-2.5 border border-emerald-100">
+                  <span className="font-bold text-emerald-800 flex items-center gap-1 mb-1">
+                    <HelpCircle className="h-3 w-3 text-emerald-600" /> Eco Impact:
+                  </span>
+                  <p className="text-gray-600 text-[11px] leading-relaxed">
+                    Avoids {activeKnowledge.environmentalImpact.co2OffsetKg} kg CO₂ eq.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

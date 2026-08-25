@@ -5,196 +5,217 @@ import { WasteCategory } from "@/types/waste";
 import { WASTE_KNOWLEDGE_BASE } from "@/data/wasteKnowledgeBase";
 import {
   Recycle,
-  CheckSquare,
-  Square,
-  ShieldAlert,
-  Clock,
-  Check,
-  X,
-  TrendingDown,
-  Info,
+  CheckCircle2,
+  XCircle,
+  Lightbulb,
+  Leaf,
+  AlertOctagon,
+  Sparkles,
 } from "lucide-react";
 
-interface DisposalGuideProps {
+interface Props {
   category: WasteCategory;
 }
 
-export const DisposalGuide: React.FC<DisposalGuideProps> = ({ category }) => {
-  const knowledge = WASTE_KNOWLEDGE_BASE[category] || WASTE_KNOWLEDGE_BASE.trash;
-  const [completedSteps, setCompletedSteps] = useState<Record<number, boolean>>({});
+type GuideTab = "steps" | "dos_donts" | "impact";
 
-  const toggleStep = (idx: number) => {
-    setCompletedSteps((prev) => ({
-      ...prev,
-      [idx]: !prev[idx],
-    }));
-  };
+export const DisposalGuide: React.FC<Props> = ({ category }) => {
+  const [activeTab, setActiveTab] = useState<GuideTab>("steps");
+  const knowledge = WASTE_KNOWLEDGE_BASE[category] || WASTE_KNOWLEDGE_BASE.trash;
 
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-      {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-200 bg-slate-50/80 px-6 py-3.5 dark:border-slate-800 dark:bg-slate-800/40">
+    <div className="card-cute overflow-hidden h-full flex flex-col">
+      {/* Header */}
+      <div className="card-cute-header flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded bg-slate-900 text-white dark:bg-emerald-600">
+          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
             <Recycle className="h-3.5 w-3.5" />
           </span>
-          <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              Stage 3: Decision Support — Prescribed Disposal Guidelines
-            </h2>
-          </div>
+          <h3 className="text-sm font-bold text-gray-800">Smart Disposal Protocol</h3>
         </div>
 
-        {/* Bin Designation Badge */}
-        <div
-          className={`rounded border px-3 py-1 text-xs font-bold ${knowledge.colorClass.binColor}`}
-        >
-          {knowledge.colorClass.binName}
+        {/* Mini Pill Tabs */}
+        <div className="flex items-center rounded-full bg-emerald-100/60 p-0.5 border border-emerald-200/60">
+          <button
+            onClick={() => setActiveTab("steps")}
+            className={`rounded-full px-2.5 py-1 text-xs font-bold transition-all ${
+              activeTab === "steps"
+                ? "bg-white text-emerald-800 shadow-xs"
+                : "text-emerald-900/70 hover:text-emerald-950"
+            }`}
+          >
+            How to Dispose
+          </button>
+          <button
+            onClick={() => setActiveTab("dos_donts")}
+            className={`rounded-full px-2.5 py-1 text-xs font-bold transition-all ${
+              activeTab === "dos_donts"
+                ? "bg-white text-emerald-800 shadow-xs"
+                : "text-emerald-900/70 hover:text-emerald-950"
+            }`}
+          >
+            Do &amp; Don't
+          </button>
+          <button
+            onClick={() => setActiveTab("impact")}
+            className={`rounded-full px-2.5 py-1 text-xs font-bold transition-all ${
+              activeTab === "impact"
+                ? "bg-white text-emerald-800 shadow-xs"
+                : "text-emerald-900/70 hover:text-emerald-950"
+            }`}
+          >
+            Eco Impact
+          </button>
         </div>
       </div>
 
-      <div className="space-y-6 p-6">
-        {/* Step-by-Step Interactive Action Checklist */}
-        <div>
-          <h3 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            <CheckSquare className="h-4 w-4 text-slate-700 dark:text-slate-300" />
-            Standard Preparation Protocol
-          </h3>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Complete the following verification and handling steps prior to final deposit:
-          </p>
+      <div className="p-4 sm:p-5 flex-1 space-y-4">
+        {/* Recommended Bin Banner */}
+        <div className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-emerald-50 to-green-50/80 border border-emerald-200/70 p-3.5">
+          <div className="flex items-center gap-3">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${knowledge.colorClass.binColor} shadow-xs font-bold text-sm`}>
+              <Recycle className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-xs text-emerald-800 font-semibold">Recommended Stream</p>
+              <h4 className="text-sm font-extrabold text-emerald-950">
+                {knowledge.colorClass.binName}
+              </h4>
+            </div>
+          </div>
+          <span className="rounded-full bg-white/90 border border-emerald-200 px-2.5 py-1 text-[10px] font-extrabold text-emerald-800 shadow-2xs">
+            {knowledge.type}
+          </span>
+        </div>
 
-          <div className="mt-3 space-y-2">
-            {knowledge.actions.map((action, idx) => {
-              const isChecked = !!completedSteps[idx];
-              return (
-                <div
-                  key={idx}
-                  onClick={() => toggleStep(idx)}
-                  className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
-                    isChecked
-                      ? "border-emerald-300 bg-emerald-50/40 text-emerald-950 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-300"
-                      : "border-slate-200 bg-slate-50/50 text-slate-800 hover:border-slate-300 hover:bg-white dark:border-slate-800 dark:bg-slate-800/40 dark:text-slate-200 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    className="mt-0.5 text-slate-700 transition-transform dark:text-slate-300"
+        {/* TAB 1: STEPS & PREP */}
+        {activeTab === "steps" && (
+          <div className="space-y-3.5 animate-fade-in">
+            <div>
+              <h5 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">
+                Step-by-Step Instructions
+              </h5>
+              <div className="space-y-2">
+                {knowledge.actions.map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-2.5 rounded-xl bg-white border border-emerald-100 p-2.5 text-xs text-gray-700 shadow-2xs"
                   >
-                    {isChecked ? (
-                      <CheckSquare className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
-                    ) : (
-                      <Square className="h-4 w-4 text-slate-400" />
-                    )}
-                  </button>
-                  <span
-                    className={`text-xs leading-relaxed ${
-                      isChecked ? "line-through opacity-70" : "font-medium"
-                    }`}
-                  >
-                    {action}
-                  </span>
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-800 mt-0.5">
+                      {idx + 1}
+                    </span>
+                    <span className="leading-relaxed">{step}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {knowledge.preparationSteps.length > 0 && (
+              <div className="rounded-xl bg-amber-50/70 border border-amber-200/70 p-3">
+                <div className="flex items-center gap-1.5 mb-1 text-xs font-bold text-amber-900">
+                  <Lightbulb className="h-3.5 w-3.5 text-amber-600" />
+                  Preparation Note
                 </div>
-              );
-            })}
+                <ul className="space-y-1">
+                  {knowledge.preparationSteps.map((prep, idx) => (
+                    <li key={idx} className="text-xs text-amber-900/90 pl-1 leading-relaxed">
+                      • {prep}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
-        {/* Do's and Don'ts Comparison Grid */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {/* Do's */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              <Check className="h-4 w-4 text-emerald-700 dark:text-emerald-400" />
-              Approved Practices
-            </h4>
-            <ul className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-              {knowledge.dos.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
+        {/* TAB 2: DO'S & DON'TS */}
+        {activeTab === "dos_donts" && (
+          <div className="space-y-3 animate-fade-in">
+            {/* Dos */}
+            <div className="rounded-xl bg-emerald-50/80 border border-emerald-200/80 p-3">
+              <div className="flex items-center gap-1.5 mb-2 text-xs font-bold text-emerald-900">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                Best Practices (Do)
+              </div>
+              <ul className="space-y-1.5">
+                {knowledge.dos.map((item, idx) => (
+                  <li key={idx} className="text-xs text-emerald-900 leading-relaxed flex items-start gap-1.5">
+                    <span className="text-emerald-600 font-bold">✓</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Don'ts */}
+            <div className="rounded-xl bg-rose-50/80 border border-rose-200/80 p-3">
+              <div className="flex items-center gap-1.5 mb-2 text-xs font-bold text-rose-900">
+                <XCircle className="h-3.5 w-3.5 text-rose-600" />
+                Common Mistakes (Don't)
+              </div>
+              <ul className="space-y-1.5">
+                {knowledge.donts.map((item, idx) => (
+                  <li key={idx} className="text-xs text-rose-900 leading-relaxed flex items-start gap-1.5">
+                    <span className="text-rose-600 font-bold">✗</span> {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Hazard Warning if any */}
+            {knowledge.hazards && (
+              <div className="rounded-xl bg-amber-50 border border-amber-200 p-2.5 flex items-start gap-2">
+                <AlertOctagon className="h-4 w-4 shrink-0 text-amber-600 mt-0.5" />
+                <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
+                  <span className="font-bold">Safety:</span> {knowledge.hazards}
+                </p>
+              </div>
+            )}
           </div>
+        )}
 
-          {/* Don'ts */}
-          <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-            <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
-              <X className="h-4 w-4 text-rose-700 dark:text-rose-400" />
-              Prohibited Practices
-            </h4>
-            <ul className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
-              {knowledge.donts.map((item, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-slate-400" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        {/* Contamination Hazard Alert */}
-        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50/60 p-4 text-xs text-amber-950 dark:border-amber-900/40 dark:bg-amber-950/20 dark:text-amber-200">
-          <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-400" />
-          <div className="space-y-1">
-            <h4 className="font-bold uppercase tracking-wider text-amber-900 dark:text-amber-300">
-              Contamination &amp; Hazard Advisory
-            </h4>
-            <p className="leading-relaxed text-amber-900/80 dark:text-amber-200/90">
-              {knowledge.hazards}
-            </p>
-          </div>
-        </div>
-
-        {/* Environmental Impact & Metrics Card */}
-        <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-slate-800/30">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-              <TrendingDown className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-              Environmental Metrics &amp; Circular Impact
-            </span>
-            <span className="flex items-center gap-1 text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              <Clock className="h-3 w-3" /> Decomposition: {knowledge.environmentalImpact.decompositionYears}
-            </span>
-          </div>
-
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <div className="rounded border border-slate-200 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
-              <span className="font-mono text-base font-bold text-slate-900 dark:text-white">
-                ~{knowledge.environmentalImpact.co2OffsetKg} kg
-              </span>
-              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                CO₂ Emissions Avoided
+        {/* TAB 3: ENVIRONMENTAL IMPACT */}
+        {activeTab === "impact" && (
+          <div className="space-y-3 animate-fade-in">
+            <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-4 shadow-sm space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-100">
+                <Leaf className="h-4 w-4" />
+                Why Proper Sorting Matters
+              </div>
+              <p className="text-xs leading-relaxed text-emerald-50 font-medium">
+                {knowledge.environmentalImpact.fact}
               </p>
             </div>
 
-            <div className="rounded border border-slate-200 bg-white p-3 text-center dark:border-slate-700 dark:bg-slate-800">
-              <span className="font-mono text-base font-bold text-slate-900 dark:text-white">
-                {knowledge.environmentalImpact.landfillSpaceLiters} L
-              </span>
-              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                Landfill Volume Diverted
-              </p>
-            </div>
+            <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-2.5">
+                <p className="text-sm font-extrabold text-emerald-800">
+                  {knowledge.environmentalImpact.co2OffsetKg} kg
+                </p>
+                <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+                  CO₂ Saved / Unit
+                </p>
+              </div>
 
-            <div className="col-span-2 rounded border border-slate-200 bg-white p-3 text-center sm:col-span-1 dark:border-slate-700 dark:bg-slate-800">
-              <span className="text-xs font-bold text-slate-900 dark:text-white">
-                {knowledge.type.split("/")[0]}
-              </span>
-              <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                Lifecycle Pathway
-              </p>
+              <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-2.5">
+                <p className="text-sm font-extrabold text-emerald-800">
+                  {knowledge.environmentalImpact.landfillSpaceLiters} L
+                </p>
+                <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+                  Landfill Saved
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-emerald-50 border border-emerald-100 p-2.5">
+                <p className="text-xs font-extrabold text-emerald-800 truncate">
+                  {knowledge.environmentalImpact.decompositionYears}
+                </p>
+                <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
+                  Decomposition
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* Fact note */}
-          <div className="mt-3 flex items-start gap-2 rounded border border-slate-200 bg-white p-3 text-xs text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-            <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
-            <span>{knowledge.environmentalImpact.fact}</span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

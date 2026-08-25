@@ -1,111 +1,76 @@
 "use client";
 
 import React from "react";
-import {
-  Leaf,
-  ScanLine,
-  MapPin,
-  BarChart3,
-  Info,
-  ShieldCheck,
-} from "lucide-react";
+import { Sparkles, MapPin, BookOpen } from "lucide-react";
+import Image from "next/image";
 
-export type NavTab = "classify" | "locations" | "dashboard" | "about";
+export type NavTab = "classify" | "locations" | "about";
 
 interface NavbarProps {
   activeTab: NavTab;
   setActiveTab: (tab: NavTab) => void;
-  savedCount: number;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({
-  activeTab,
-  setActiveTab,
-  savedCount,
-}) => {
+const navItems: { id: NavTab; label: string; shortLabel: string; icon: React.ElementType }[] = [
+  { id: "classify", label: "AI Sorter & XAI", shortLabel: "Sort", icon: Sparkles },
+  { id: "locations", label: "Drop-off Centers", shortLabel: "Drop-offs", icon: MapPin },
+  { id: "about", label: "Waste Guide & AI", shortLabel: "Guide", icon: BookOpen },
+];
+
+export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/95">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/* Brand */}
-        <div
-          className="flex cursor-pointer items-center gap-3"
+    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-emerald-100/80 shadow-xs transition-all">
+      <div className="mx-auto max-w-6xl flex items-center justify-between px-4 sm:px-6 py-2.5">
+        {/* Cute Brand Logo */}
+        <button
           onClick={() => setActiveTab("classify")}
+          className="flex items-center gap-2.5 text-left group transition-transform active:scale-98"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-700 text-white shadow-xs">
-            <Leaf className="h-5 w-5" />
+          <div className="relative h-10 w-10 rounded-2xl overflow-hidden shadow-xs border border-emerald-200 bg-white flex items-center justify-center group-hover:shadow-emerald-200 transition-shadow">
+            <Image
+              src="/images/cute_eco_mascot.jpg"
+              alt="Eco Mascot"
+              width={40}
+              height={40}
+              className="object-cover"
+              priority
+            />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">
-                EcoSort<span className="text-emerald-700 dark:text-emerald-400">AI</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-extrabold tracking-tight text-gray-900">
+                EcoSort<span className="text-emerald-600">AI</span>
               </span>
-              <span className="hidden rounded border border-slate-200 bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 md:inline-block">
-                Decision Support System
+              <span className="hidden sm:inline-block rounded-full bg-emerald-100/90 text-emerald-800 text-[10px] font-bold px-2 py-0.5 border border-emerald-200">
+                Smart XAI
               </span>
             </div>
-            <p className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-              Explainable AI for Waste Classification &amp; Circular Logistics
+            <p className="text-[11px] font-medium text-emerald-700/80 -mt-0.5">
+              Decision Support System
             </p>
           </div>
-        </div>
+        </button>
 
-        {/* Navigation Tabs */}
-        <nav className="flex items-center gap-1 sm:gap-2">
-          <button
-            onClick={() => setActiveTab("classify")}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors ${
-              activeTab === "classify"
-                ? "bg-slate-900 text-white dark:bg-emerald-600 dark:text-white"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-            }`}
-          >
-            <ScanLine className="h-4 w-4" />
-            <span className="hidden sm:inline">Classification &amp; Analysis</span>
-            <span className="sm:hidden">Analyze</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("locations")}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors ${
-              activeTab === "locations"
-                ? "bg-slate-900 text-white dark:bg-emerald-600 dark:text-white"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-            }`}
-          >
-            <MapPin className="h-4 w-4" />
-            <span className="hidden sm:inline">Collection Locator</span>
-            <span className="sm:hidden">Locations</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab("dashboard")}
-            className={`relative flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors ${
-              activeTab === "dashboard"
-                ? "bg-slate-900 text-white dark:bg-emerald-600 dark:text-white"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-            }`}
-          >
-            <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">Audit Dashboard</span>
-            <span className="sm:hidden">Dashboard</span>
-            {savedCount > 0 && (
-              <span className="ml-1 rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                {savedCount}
-              </span>
-            )}
-          </button>
-
-          <button
-            onClick={() => setActiveTab("about")}
-            className={`flex items-center gap-2 rounded-md px-3 py-2 text-xs font-semibold transition-colors ${
-              activeTab === "about"
-                ? "bg-slate-900 text-white dark:bg-emerald-600 dark:text-white"
-                : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800"
-            }`}
-          >
-            <Info className="h-4 w-4" />
-            <span className="hidden md:inline">Methodology</span>
-          </button>
+        {/* Clean Pill Navigation */}
+        <nav className="flex items-center gap-1 sm:gap-1.5 bg-white/70 backdrop-blur-sm p-1 rounded-full border border-emerald-200/80 shadow-2xs">
+          {navItems.map(({ id, label, shortLabel, icon: Icon }) => {
+            const isActive = activeTab === id;
+            return (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`relative flex items-center gap-1.5 rounded-full px-3.5 sm:px-4 py-1.5 text-xs sm:text-[13px] font-semibold transition-all duration-200 ${
+                  isActive
+                    ? "bg-emerald-600 text-white shadow-sm shadow-emerald-600/30 scale-100"
+                    : "text-emerald-900/70 hover:text-emerald-950 hover:bg-emerald-100/60"
+                }`}
+              >
+                <Icon className={`h-3.5 w-3.5 ${isActive ? "text-emerald-100" : "text-emerald-600"}`} />
+                <span className="hidden sm:inline">{label}</span>
+                <span className="sm:hidden">{shortLabel}</span>
+              </button>
+            );
+          })}
         </nav>
       </div>
     </header>

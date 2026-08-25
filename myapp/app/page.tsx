@@ -1,17 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { isError, type PredictResponse, type WasteLogEntry, type WasteCategory } from "@/types/waste";
-import { WASTE_KNOWLEDGE_BASE } from "@/data/wasteKnowledgeBase";
+import { useState } from "react";
+import Image from "next/image";
+import {
+  isError,
+  type PredictResponse,
+  type SureResult,
+  type UnsureResult,
+  type WasteCategory,
+} from "@/types/waste";
 import { Navbar, NavTab } from "@/components/Navbar";
 import { ImageUploader } from "@/components/ImageUploader";
 import { ClassificationResult } from "@/components/ClassificationResult";
 import { GradCamViewer } from "@/components/GradCamViewer";
 import { DisposalGuide } from "@/components/DisposalGuide";
 import { LocationFinder } from "@/components/LocationFinder";
-import { ImpactDashboard } from "@/components/ImpactDashboard";
 import { AboutModal } from "@/components/AboutModal";
-import { AlertCircle, Loader2, Sparkles, ArrowRight, ShieldCheck, MapPin } from "lucide-react";
+import { AlertCircle, Loader2, Sparkles, MapPin, ArrowRight } from "lucide-react";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<NavTab>("classify");
@@ -19,37 +24,12 @@ export default function Home() {
   const [result, setResult] = useState<PredictResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [savedLogs, setSavedLogs] = useState<WasteLogEntry[]>([]);
-  const [isCurrentSaved, setIsCurrentSaved] = useState<boolean>(false);
-
-  // Load persisted history from localStorage on initial render
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("ecosort_logs");
-      if (stored) {
-        setSavedLogs(JSON.parse(stored));
-      }
-    } catch {
-      // Local storage fallback
-    }
-  }, []);
-
-  // Save logs to localStorage whenever updated
-  const saveLogsToStorage = (newLogs: WasteLogEntry[]) => {
-    setSavedLogs(newLogs);
-    try {
-      localStorage.setItem("ecosort_logs", JSON.stringify(newLogs));
-    } catch {
-      // Ignore storage quota errors
-    }
-  };
 
   async function handleFile(file: File): Promise<void> {
     const objectUrl = URL.createObjectURL(file);
     setPreview(objectUrl);
     setResult(null);
     setErrorMessage(null);
-    setIsCurrentSaved(false);
     setLoading(true);
 
     const form = new FormData();
@@ -67,7 +47,7 @@ export default function Home() {
       const msg =
         err instanceof Error
           ? err.message
-          : "Could not connect to model service. Ensure the backend FastAPI server is running.";
+          : "Could not connect to model backend. Ensure FastAPI server is running.";
       setErrorMessage(msg);
       setResult({ error: msg });
     } finally {
@@ -79,38 +59,6 @@ export default function Home() {
     setPreview(null);
     setResult(null);
     setErrorMessage(null);
-    setIsCurrentSaved(false);
-  };
-
-  const handleSaveToDashboard = () => {
-    if (!result || isError(result) || isCurrentSaved) return;
-
-    const category = (result.sure ? result.label : result.top3[0]?.label || "trash") as WasteCategory;
-    const confidence = result.sure ? result.confidence : result.top3[0]?.confidence || 0;
-    const knowledge = WASTE_KNOWLEDGE_BASE[category] || WASTE_KNOWLEDGE_BASE.trash;
-
-    const newEntry: WasteLogEntry = {
-      id: `log-${Date.now()}`,
-      timestamp: new Date().toISOString(),
-      category,
-      confidence,
-      imagePreview: preview || undefined,
-      status: "sorted",
-      co2SavedKg: knowledge.environmentalImpact.co2OffsetKg,
-    };
-
-    const updated = [newEntry, ...savedLogs];
-    saveLogsToStorage(updated);
-    setIsCurrentSaved(true);
-  };
-
-  const handleClearLogs = () => {
-    saveLogsToStorage([]);
-  };
-
-  const handleUpdateLogStatus = (id: string, status: WasteLogEntry["status"]) => {
-    const updated = savedLogs.map((l) => (l.id === id ? { ...l, status } : l));
-    saveLogsToStorage(updated);
   };
 
   const currentCategory: WasteCategory | undefined =
@@ -119,180 +67,183 @@ export default function Home() {
       : undefined;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 text-slate-900 transition-colors dark:bg-slate-950 dark:text-slate-100 flex flex-col font-sans">
-      {/* Navigation Header */}
-      <Navbar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        savedCount={savedLogs.length}
-      />
+    <div className="min-h-screen flex flex-col font-sans">
+      {/* Frosted Glass Navbar */}
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6 lg:px-8">
-        {/* TAB 1: IDENTIFY & SORT (Core Decision Support Flow) */}
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 sm:px-6 py-6 sm:py-8">
+        {/* ───────── TAB 1: CLASSIFY & EXPLAIN (Decision Support) ───────── */}
         {activeTab === "classify" && (
-          <div className="space-y-8 animate-fade-in">
-            {/* Header Title Section */}
-            <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
-                AI Inference &amp; Explainable Decision Support Engine
+          <div className="space-y-6 animate-fade-in">
+            {/* HERO BANNER */}
+            {!result && (
+              <div className="card-cute overflow-hidden p-6 sm:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                  {/* Left Hero Text */}
+                  <div className="md:col-span-7 space-y-3 text-center md:text-left">
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/90 border border-emerald-200 px-3 py-1 text-xs font-extrabold text-emerald-800">
+                      <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+                      Smart Waste Decision Support System
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-gray-900 leading-tight">
+                      Sort Waste with Confidence using <span className="text-emerald-600">Explainable AI</span>
+                    </h1>
+                    <p className="text-xs sm:text-sm text-gray-700 max-w-xl leading-relaxed font-medium">
+                      Upload any waste photo. Our neural network classifies the material into 10 streams, renders Grad-CAM visual explanations, and prescribes exact eco-friendly disposal guidelines.
+                    </p>
+
+                    <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-2 text-[11px] font-bold text-emerald-900">
+                      <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
+                        🌿 10 Waste Streams
+                      </span>
+                      <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
+                        🔍 Grad-CAM Heatmaps
+                      </span>
+                      <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
+                        📍 GIS Drop-offs
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right Cute Graphic */}
+                  <div className="md:col-span-5 flex justify-center">
+                    <div className="relative w-full max-w-[320px] aspect-[16/10] rounded-3xl overflow-hidden shadow-lg border-2 border-emerald-200 bg-white">
+                      <Image
+                        src="/images/eco_hero_banner.jpg"
+                        alt="Eco Sorting Illustration"
+                        fill
+                        className="object-cover"
+                        priority
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
-                Intelligent Waste Stream Classification &amp; Protocol Advisory
-              </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                Upload or capture any waste material. The neural network predicts the stream category,
-                provides Grad-CAM visual feature attribution, prescribes standard disposal protocols, and locates
-                open GIS collection nodes.
-              </p>
-            </div>
+            )}
 
-            {/* Image Upload Zone */}
-            <div className="mx-auto max-w-3xl">
-              <ImageUploader
-                onFileSelected={handleFile}
-                loading={loading}
-                onReset={handleReset}
-                hasResult={!!result || !!preview}
-              />
-            </div>
+            {/* UPLOADER COMPONENT */}
+            {!result && (
+              <div className="max-w-2xl mx-auto">
+                <ImageUploader
+                  onFileSelected={handleFile}
+                  loading={loading}
+                  onReset={handleReset}
+                  hasResult={!!result || !!preview}
+                />
+              </div>
+            )}
 
-            {/* Loading Spinner */}
+            {/* LOADING STATE */}
             {loading && (
-              <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-xl border border-slate-200 bg-white p-8 text-center shadow-xs dark:border-slate-800 dark:bg-slate-900">
-                <Loader2 className="h-8 w-8 animate-spin text-slate-700 dark:text-slate-300" />
-                <h3 className="mt-4 text-sm font-bold text-slate-900 dark:text-white">
-                  Executing CNN Inference &amp; Grad-CAM Computation...
+              <div className="card-cute mx-auto max-w-md p-8 text-center space-y-3">
+                <div className="relative mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600">
+                  <Loader2 className="h-7 w-7 animate-spin" />
+                </div>
+                <h3 className="text-base font-extrabold text-gray-800">
+                  Running Neural Saliency &amp; Classification...
                 </h3>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-                  Calculating convolutional activation tensors and retrieving protocol models.
+                <p className="text-xs text-gray-600 font-medium">
+                  Extracting feature gradients &amp; computing Grad-CAM spatial activation map
                 </p>
               </div>
             )}
 
-            {/* Error Banner */}
+            {/* ERROR BANNER */}
             {errorMessage && (
-              <div className="mx-auto flex max-w-3xl items-start gap-3 rounded-xl border border-rose-200 bg-rose-50/70 p-4 text-rose-950 dark:border-rose-900/60 dark:bg-rose-950/40 dark:text-rose-200">
-                <AlertCircle className="h-5 w-5 shrink-0 text-rose-600 dark:text-rose-400" />
+              <div className="mx-auto max-w-2xl flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50/90 p-4">
+                <AlertCircle className="h-5 w-5 shrink-0 text-rose-500 mt-0.5" />
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider">Inference Request Error</h4>
-                  <p className="mt-1 text-xs leading-relaxed">{errorMessage}</p>
+                  <h4 className="text-xs font-bold text-rose-900">Inference Request Notice</h4>
+                  <p className="mt-0.5 text-xs text-rose-700">{errorMessage}</p>
                 </div>
               </div>
             )}
 
-            {/* Decision Support Output Suite */}
+            {/* ───────── RESULT DASHBOARD (2-COLUMN COMPACT LAYOUT) ───────── */}
             {result && !isError(result) && (
-              <div className="space-y-8 animate-fade-in">
-                {/* 1. AI Result Section */}
-                <ClassificationResult
-                  result={result}
-                  previewUrl={preview}
-                  onSaveToDashboard={handleSaveToDashboard}
-                  isSaved={isCurrentSaved}
-                />
-
-                {/* 2. Explainable AI Section */}
-                <GradCamViewer
-                  result={result}
-                  originalPreview={preview}
-                />
-
-                {/* 3. Recommended Disposal Action */}
-                {currentCategory && (
-                  <DisposalGuide category={currentCategory} />
-                )}
-
-                {/* 4. Nearby Disposal Facilities */}
-                {currentCategory && (
-                  <LocationFinder highlightCategory={currentCategory} />
-                )}
-
-                {/* Next Step Call to Action */}
-                <div className="flex flex-wrap items-center justify-between rounded-xl border border-slate-200 bg-white p-6 shadow-xs dark:border-slate-800 dark:bg-slate-900">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-white dark:bg-emerald-600">
-                      <ShieldCheck className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                        Log Record in Environmental Audit Trail
-                      </h4>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">
-                        Record this verified classification session in your personal waste accounting dashboard to track carbon savings.
-                      </p>
-                    </div>
+              <div className="space-y-4 animate-fade-in">
+                {/* Action Bar with New Scan Button */}
+                <div className="flex items-center justify-between card-cute px-4 py-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-extrabold text-emerald-950">
+                      Analysis Complete
+                    </span>
                   </div>
-
                   <button
-                    onClick={() => setActiveTab("dashboard")}
-                    className="mt-3 flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 text-xs font-bold text-white shadow-xs transition-colors hover:bg-slate-800 dark:bg-emerald-600 dark:hover:bg-emerald-700 sm:mt-0"
+                    onClick={handleReset}
+                    className="flex items-center gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 px-3.5 py-1 text-xs font-bold text-white shadow-xs transition-all active:scale-95"
                   >
-                    Open Audit Dashboard <ArrowRight className="h-3.5 w-3.5" />
+                    + Scan New Item
                   </button>
                 </div>
+
+                {/* 2-Column Split View */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+                  {/* LEFT COLUMN: AI Classification + Grad-CAM Heatmap */}
+                  <div className="lg:col-span-6 space-y-4">
+                    <ClassificationResult
+                      result={result as SureResult | UnsureResult}
+                      previewUrl={preview}
+                    />
+
+                    <GradCamViewer
+                      result={result}
+                      originalPreview={preview}
+                    />
+                  </div>
+
+                  {/* RIGHT COLUMN: Disposal Protocol + Nearby Drop-off Shortcut */}
+                  <div className="lg:col-span-6 space-y-4">
+                    {currentCategory && <DisposalGuide category={currentCategory} />}
+
+                    {/* Quick Drop-off Finder Card */}
+                    <div className="card-cute p-4 flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                          <MapPin className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-gray-900">
+                            Looking for drop-off centers?
+                          </h4>
+                          <p className="text-[11px] text-gray-500">
+                            Find nearby verified recycling points &amp; e-waste hubs
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setActiveTab("locations")}
+                        className="flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-white border border-emerald-200 px-3 py-1.5 rounded-full shadow-2xs shrink-0 hover:bg-emerald-50 transition-colors"
+                      >
+                        Open Map <ArrowRight className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
         )}
 
-        {/* TAB 2: NEARBY FACILITIES & DIRECTORY */}
-        {activeTab === "locations" && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <MapPin className="h-3.5 w-3.5" /> Geographic Information System
-              </div>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
-                Disposal Infrastructure &amp; Collection Point Locator
-              </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-xs text-slate-500 dark:text-slate-400">
-                Query verified e-waste collection points, municipal recycling centers, donation boxes, and organic composting drop-offs.
-              </p>
-            </div>
+        {/* ───────── TAB 2: LOCATIONS (Drop-off locator) ───────── */}
+        {activeTab === "locations" && <LocationFinder />}
 
-            <LocationFinder showAllInitially={true} />
-          </div>
-        )}
-
-        {/* TAB 3: PERSONAL IMPACT DASHBOARD & AUDIT LOG */}
-        {activeTab === "dashboard" && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="text-center">
-              <div className="inline-flex items-center gap-1.5 rounded border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <Sparkles className="h-3.5 w-3.5" /> Personal Waste Accounting
-              </div>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl text-slate-900 dark:text-white">
-                Personal Waste Management &amp; Impact Tracker
-              </h1>
-              <p className="mx-auto mt-2 max-w-2xl text-xs text-slate-500 dark:text-slate-400">
-                Monitor cumulative diversion metrics, estimated carbon abatement, compliance milestones, and audit history.
-              </p>
-            </div>
-
-            <ImpactDashboard
-              logs={savedLogs}
-              onClearLogs={handleClearLogs}
-              onUpdateStatus={handleUpdateLogStatus}
-            />
-          </div>
-        )}
-
-        {/* TAB 4: ABOUT & SYSTEM METHODOLOGY */}
-        {activeTab === "about" && (
-          <div className="animate-fade-in">
-            <AboutModal />
-          </div>
-        )}
+        {/* ───────── TAB 3: ABOUT & GUIDE (Knowledge Encyclopedia) ───────── */}
+        {activeTab === "about" && <AboutModal />}
       </main>
 
-      {/* Footer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 sm:flex-row sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} EcoSortAI — Smart Waste Management Decision Support System Using Explainable AI.</p>
-          <div className="flex items-center gap-4 text-xs font-medium text-slate-600 dark:text-slate-300">
-            <span>Identify &rarr; Explain &rarr; Recommend &rarr; Locate &rarr; Track</span>
+      {/* Clean Cute Frosted Footer */}
+      <footer className="mt-auto border-t border-emerald-100/80 bg-white/75 backdrop-blur-md py-4 text-center">
+        <div className="mx-auto max-w-6xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600">
+          <div className="flex items-center gap-1.5 font-bold text-emerald-900">
+            <span>EcoSortAI</span>
+            <span className="text-gray-300">•</span>
+            <span className="font-semibold text-gray-600">Smart Waste Management Decision Support System</span>
           </div>
+          <p className="text-[11px] text-gray-500 font-medium">
+            Identify → Explain (Grad-CAM) → Recommend → Locate
+          </p>
         </div>
       </footer>
     </div>
