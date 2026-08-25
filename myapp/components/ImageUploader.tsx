@@ -46,51 +46,58 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 
   // Helper to generate a sample canvas image for demo test presets
   const handleQuickDemo = (label: string, primaryColor: string, detail: string) => {
-    const canvas = document.createElement("canvas");
-    canvas.width = 400;
-    canvas.height = 400;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = 400;
+      canvas.height = 400;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
 
-    // Background
-    ctx.fillStyle = "#f1f5f9";
-    ctx.fillRect(0, 0, 400, 400);
+      // Background
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(0, 0, 400, 400);
 
-    // Vignette / Shadow
-    const grad = ctx.createRadialGradient(200, 200, 50, 200, 200, 200);
-    grad.addColorStop(0, "rgba(255,255,255,0.8)");
-    grad.addColorStop(1, "rgba(203,213,225,0.6)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 400, 400);
+      // Gradient
+      const grad = ctx.createRadialGradient(200, 200, 40, 200, 200, 220);
+      grad.addColorStop(0, "#ffffff");
+      grad.addColorStop(1, "#cbd5e1");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 400, 400);
 
-    // Object silhouette / shape
-    ctx.fillStyle = primaryColor;
-    ctx.beginPath();
-    ctx.roundRect(100, 90, 200, 220, 24);
-    ctx.fill();
+      // Main shape (safe across all browsers)
+      ctx.fillStyle = primaryColor;
+      ctx.fillRect(80, 80, 240, 240);
 
-    // Inner detail
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 22px system-ui, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(label.toUpperCase(), 200, 180);
+      // Inner box
+      ctx.fillStyle = "rgba(0, 0, 0, 0.15)";
+      ctx.fillRect(90, 90, 220, 220);
 
-    ctx.font = "14px system-ui, sans-serif";
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
-    ctx.fillText(detail, 200, 215);
+      // Text
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 24px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label.toUpperCase(), 200, 180);
 
-    ctx.font = "12px system-ui, sans-serif";
-    ctx.fillStyle = "#64748b";
-    ctx.fillText("EcoSortAI Test Sample", 200, 360);
+      ctx.font = "14px sans-serif";
+      ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+      ctx.fillText(detail, 200, 220);
 
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const testFile = new File([blob], `sample_${label.toLowerCase()}.png`, {
-          type: "image/png",
-        });
-        onFileSelected(testFile);
-      }
-    }, "image/png");
+      ctx.font = "12px sans-serif";
+      ctx.fillStyle = "#475569";
+      ctx.fillText("EcoSortAI Test Benchmark Sample", 200, 360);
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const testFile = new File([blob], `sample_${label.toLowerCase()}.jpg`, {
+            type: "image/jpeg",
+          });
+          onFileSelected(testFile);
+        }
+      }, "image/jpeg", 0.9);
+    } catch (e) {
+      console.error("Demo generation failed", e);
+    }
   };
 
   return (
