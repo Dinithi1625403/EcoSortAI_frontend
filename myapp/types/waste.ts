@@ -1,5 +1,17 @@
+export type WasteCategory =
+  | "battery"
+  | "biological"
+  | "cardboard"
+  | "clothes"
+  | "glass"
+  | "metal"
+  | "paper"
+  | "plastic"
+  | "shoes"
+  | "trash";
+
 export interface TopGuess {
-  label: string;
+  label: WasteCategory | string;
   confidence: number;
 }
 
@@ -10,12 +22,12 @@ export interface DebugInfo {
 
 export interface SureResult {
   sure: true;
-  label: string;
+  label: WasteCategory;
   confidence: number;
   advice: string;
   top3: TopGuess[];
   close_call: boolean;
-  runner_up: string;
+  runner_up: WasteCategory | string;
   tip: string | null;
   focus_note: string;
   heatmap: string;
@@ -28,7 +40,7 @@ export interface UnsureResult {
   message: string;
   top3: TopGuess[];
   tip?: string | null;
-  runner_up?: string;
+  runner_up?: WasteCategory | string;
   heatmap?: string;
   debug?: DebugInfo;
 }
@@ -41,4 +53,57 @@ export type PredictResponse = SureResult | UnsureResult | ErrorResult;
 
 export function isError(r: PredictResponse): r is ErrorResult {
   return "error" in r;
+}
+
+export interface WasteKnowledgeItem {
+  id: WasteCategory;
+  name: string;
+  type: "Hazardous Waste" | "Organic Waste" | "Recyclable Waste" | "Reusable / Donation" | "General Landfill";
+  colorClass: {
+    bg: string;
+    text: string;
+    border: string;
+    badge: string;
+    binColor: string;
+    binName: string;
+  };
+  summary: string;
+  actions: string[];
+  dos: string[];
+  donts: string[];
+  hazards: string;
+  environmentalImpact: {
+    co2OffsetKg: number; // estimated kg CO2 avoided per item recycled/diverted
+    landfillSpaceLiters: number;
+    decompositionYears: string;
+    fact: string;
+  };
+  preparationSteps: string[];
+}
+
+export interface DisposalLocation {
+  id: string;
+  name: string;
+  type: "E-Waste / Hazardous" | "Recycling Hub" | "Donation Center" | "Organic / Composting" | "Municipal Drop-off";
+  address: string;
+  city: string;
+  acceptedCategories: WasteCategory[];
+  distanceKm: number;
+  operatingHours: string;
+  phone: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  notes: string;
+}
+
+export interface WasteLogEntry {
+  id: string;
+  timestamp: string;
+  category: WasteCategory;
+  confidence: number;
+  imagePreview?: string;
+  status: "sorted" | "dropped_off" | "reused";
+  co2SavedKg: number;
 }
