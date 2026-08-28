@@ -112,6 +112,7 @@ export default function Home() {
                         src="/images/eco_hero_banner.jpg"
                         alt="Eco Sorting Illustration"
                         fill
+                        sizes="(max-width: 768px) 100vw, 320px"
                         className="object-cover"
                         priority
                       />

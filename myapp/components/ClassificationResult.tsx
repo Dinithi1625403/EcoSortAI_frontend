@@ -98,21 +98,30 @@ export const ClassificationResult: React.FC<Props> = ({ result, previewUrl }) =>
             </span>
           </div>
           <div className="grid grid-cols-3 gap-2">
-            {result.top3.map((g, i) => (
-              <div
-                key={g.label}
-                className={`rounded-xl p-2 text-center transition-all ${
-                  i === 0
-                    ? "bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold"
-                    : "bg-gray-50 border border-gray-100 text-gray-700"
-                }`}
-              >
-                <p className="text-xs capitalize truncate">{g.label}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5 font-semibold">
-                  {(g.confidence * 100).toFixed(0)}%
-                </p>
-              </div>
-            ))}
+            {result.top3.map((g, i) => {
+              const itemKnowledge = WASTE_KNOWLEDGE_BASE[g.label as WasteCategory];
+              const displayLabel = g.label === "shoes" 
+                ? "Accessories" 
+                : itemKnowledge 
+                ? itemKnowledge.name.split(" ")[0] 
+                : g.label;
+
+              return (
+                <div
+                  key={g.label}
+                  className={`rounded-xl p-2 text-center transition-all ${
+                    i === 0
+                      ? "bg-emerald-50 border border-emerald-200 text-emerald-900 font-bold"
+                      : "bg-gray-50 border border-gray-100 text-gray-700"
+                  }`}
+                >
+                  <p className="text-xs font-semibold capitalize truncate">{displayLabel}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5 font-semibold">
+                    {(g.confidence * 100).toFixed(0)}%
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
 

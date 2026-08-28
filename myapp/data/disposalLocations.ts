@@ -38,7 +38,7 @@ export const VERIFIED_DISPOSAL_LOCATIONS: DisposalLocation[] = [
     operatingHours: "Tue - Sun: 09:00 AM - 05:00 PM",
     phone: "+1 (555) 654-3210",
     coordinates: { lat: 37.769, lng: -122.4467 },
-    notes: "Accepts clean wearable clothes, footwear, and fabric scraps for textile recycling.",
+    notes: "Accepts clean wearable clothes, footwear, bags, and accessories for donation or textile recycling.",
   },
   {
     id: "loc-4",

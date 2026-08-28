@@ -30,6 +30,7 @@ export const AboutModal: React.FC = () => {
               src="/images/cute_eco_mascot.jpg"
               alt="Eco Mascot"
               fill
+              sizes="(max-width: 768px) 128px, 160px"
               className="object-cover"
             />
           </div>

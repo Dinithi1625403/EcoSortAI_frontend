@@ -366,7 +366,7 @@ export const WASTE_KNOWLEDGE_BASE: Record<WasteCategory, WasteKnowledgeItem> = {
 
   shoes: {
     id: "shoes",
-    name: "Footwear & Shoes",
+    name: "Accessories",
     type: "Reusable / Donation",
     colorClass: {
       bg: "bg-violet-50 dark:bg-violet-950/40",
@@ -374,37 +374,39 @@ export const WASTE_KNOWLEDGE_BASE: Record<WasteCategory, WasteKnowledgeItem> = {
       border: "border-violet-200 dark:border-violet-800",
       badge: "bg-violet-100 text-violet-800 border-violet-300",
       binColor: "bg-violet-600 text-white",
-      binName: "Purple / Shoe & Clothing Donation Bin",
+      binName: "Purple / Accessories Donation Bin",
     },
     summary:
-      "Athletic sneakers, leather shoes, boots, and sandals. Complex multi-material composition (rubber, foam, leather, adhesives) makes reuse the primary disposal path.",
+      "Footwear (sneakers, boots, sandals, heels) and accessories (leather bags, purses, backpacks, belts). Made of durable multi-materials (leather, PU, canvas, rubber, metal hardware), reuse and donation are the most sustainable pathways.",
     actions: [
-      "Tie pair together by laces or rubber band so they do not get separated.",
-      "If in wearable shape, donate to charity organizations, shoe drives, or secondhand stores.",
-      "If completely worn out, deposit into athletic brand shoe recycling programs (e.g. Nike Reuse-A-Shoe for playground rubber).",
+      "If in usable condition, donate to charities, thrift shops, or community clothing drives.",
+      "For shoes: tie laces together to keep pairs matched. For bags/purses: empty all pockets and compartments.",
+      "If severely damaged, drop into specialty textile/shoe reclamation boxes (e.g. brand take-back programs).",
     ],
     dos: [
-      "Tie shoe pairs securely together before donating.",
-      "Clean off exterior mud and dirt.",
-      "Look for brand-specific athletic shoe recycling drop-boxes for worn-out soles.",
+      "Empty all pockets, coins, and personal items from bags and purses before donating.",
+      "Tie shoe pairs securely together so they do not get separated in sorting bins.",
+      "Clean exterior surfaces and wipe off dirt or mud.",
+      "Look for dedicated brand take-back bins for heavily worn athletic shoes or bags.",
     ],
     donts: [
-      "Do not throw matched wearable pairs in landfill trash.",
-      "Never put shoes into automated single-stream recycling conveyors.",
-      "Do not donate damp or mildewed shoes.",
+      "Do not throw usable footwear, purses, or bags into landfill trash.",
+      "Never place shoes, bags, or straps into automated curbside recycling bins (they tangle conveyors).",
+      "Do not donate wet or mildewed items.",
     ],
     hazards:
-      "Multi-material polyurethane foams, EVA, and vulcanized rubber take centuries to decompose in landfills and release toxic VOCs when improperly incinerated.",
+      "Composite leather, polyurethane (PU), EVA foam, and vulcanized rubber take 50–100+ years to decompose in landfills and waste valuable craftsmanship and raw materials.",
     environmentalImpact: {
       co2OffsetKg: 4.2,
       landfillSpaceLiters: 3.0,
-      decompositionYears: "50 - 100 years",
-      fact: "Reusing a pair of shoes saves over 14 kg of carbon emissions associated with new manufacturing, tanning, and global logistics.",
+      decompositionYears: "50 - 100+ years",
+      fact: "Donating or reusing a pair of shoes or leather bag saves over 14 kg of carbon emissions compared to manufacturing and tanning new replacements.",
     },
     preparationSteps: [
-      "Brush off excess dirt or mud.",
-      "Tie laces together to keep the pair united.",
-      "Drop off at donation center or shoe recycling bin.",
+      "Check and empty all inner pockets, cardholders, and zippers.",
+      "Wipe off surface dirt and ensure the item is dry.",
+      "Tie shoe laces together if applicable.",
+      "Drop off at a donation center, thrift box, or textile bin.",
     ],
   },
 
