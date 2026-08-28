@@ -7,7 +7,6 @@ import {
   ExternalLink,
   Navigation,
   Loader2,
-  MapPinOff,
   Building2,
   Phone,
   Clock,

@@ -4,7 +4,7 @@ export const WASTE_KNOWLEDGE_BASE: Record<WasteCategory, WasteKnowledgeItem> = {
   battery: {
     id: "battery",
     name: "Battery & Electronic Cells",
-    type: "Hazardous E-Waste",
+    type: "Hazardous Waste",
     colorClass: {
       bg: "bg-red-50 dark:bg-red-950/40",
       text: "text-red-700 dark:text-red-400",

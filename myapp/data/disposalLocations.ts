@@ -30,7 +30,7 @@ export const VERIFIED_DISPOSAL_LOCATIONS: DisposalLocation[] = [
   {
     id: "sl-loc-3",
     name: "Eco Spindles / Plastic Cycle PET Drop-off Center",
-    type: "Plastic Recycling Hub",
+    type: "Recycling Hub",
     address: "Near Viharamahadevi Park / Public Recycling Points",
     city: "Colombo 07",
     acceptedCategories: ["plastic"],
@@ -43,7 +43,7 @@ export const VERIFIED_DISPOSAL_LOCATIONS: DisposalLocation[] = [
   {
     id: "sl-loc-4",
     name: "Neptune Papers Recyclers & Carton Depot",
-    type: "Paper & Cardboard Hub",
+    type: "Recycling Hub",
     address: "154 Sri Ramanathan Mawatha",
     city: "Colombo 13",
     acceptedCategories: ["paper", "cardboard"],
@@ -95,7 +95,7 @@ export const VERIFIED_DISPOSAL_LOCATIONS: DisposalLocation[] = [
   {
     id: "sl-loc-8",
     name: "Ceylon Glass Company (Piramal Glass) Collection Point",
-    type: "Glass Recycling Hub",
+    type: "Recycling Hub",
     address: "Industrial Zone",
     city: "Horana / Colombo Area",
     acceptedCategories: ["glass"],
