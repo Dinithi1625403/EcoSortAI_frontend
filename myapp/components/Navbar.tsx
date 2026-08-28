@@ -41,12 +41,12 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
               <span className="text-base font-extrabold tracking-tight text-gray-900">
                 EcoSort<span className="text-emerald-600">AI</span>
               </span>
-              <span className="hidden sm:inline-block rounded-full bg-emerald-100/90 text-emerald-800 text-[10px] font-bold px-2 py-0.5 border border-emerald-200">
-                Instant Sort
+              <span className="hidden sm:inline-block rounded-full bg-emerald-100/90 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 border border-emerald-200">
+                🇱🇰 Sri Lanka CEA
               </span>
             </div>
             <p className="text-[11px] font-semibold text-emerald-700/90 -mt-0.5">
-              Smart Waste &amp; Recycling Assistant
+              Smart Waste Sorter &amp; Recycling Guide
             </p>
           </div>
         </button>

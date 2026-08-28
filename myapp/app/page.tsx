@@ -83,24 +83,24 @@ export default function Home() {
                   <div className="md:col-span-7 space-y-3 text-center md:text-left">
                     <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100/90 border border-emerald-200 px-3 py-1 text-xs font-extrabold text-emerald-800">
                       <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
-                      Smart Waste &amp; Recycling Sorter
+                      🇱🇰 Sri Lanka CEA Waste Standard
                     </div>
                     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-gray-900 leading-tight">
-                      Never guess <span className="text-emerald-600">which bin</span> again
+                      Sort waste with confidence in <span className="text-emerald-600">Sri Lanka</span>
                     </h1>
                     <p className="text-xs sm:text-sm text-gray-700 max-w-xl leading-relaxed font-medium">
-                      Take a quick photo of any household item. EcoSortAI tells you the exact bin it goes into, how to prepare it, and where to drop it off.
+                      Take a quick photo of any household item. EcoSortAI identifies the material and tells you the exact bin according to <strong>Central Environmental Authority (CEA)</strong> guidelines and local municipal collection schedules.
                     </p>
 
                     <div className="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-2 text-[11px] font-bold text-emerald-900">
                       <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
-                        🌿 10 Waste Streams
+                        🌿 CEA 10 Waste Streams
                       </span>
                       <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
-                        💡 1-Second Prep Guide
+                        💡 1-Second Prep Rules
                       </span>
                       <span className="rounded-full bg-white/95 border border-emerald-200 px-3 py-1 shadow-2xs">
-                        📍 Nearest Drop-offs
+                        📍 Local Drop-off Hubs
                       </span>
                     </div>
                   </div>

@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { MapPin, ExternalLink, Navigation, Loader2, MapPinOff, Building2 } from "lucide-react";
+import { VERIFIED_DISPOSAL_LOCATIONS } from "@/data/disposalLocations";
+import {
+  MapPin,
+  ExternalLink,
+  Navigation,
+  Loader2,
+  MapPinOff,
+  Building2,
+  Phone,
+  Clock,
+  Sparkles,
+} from "lucide-react";
 
 interface FacilityResult {
   name: string;
@@ -10,13 +21,28 @@ interface FacilityResult {
   address: string;
   lat: number;
   lon: number;
+  phone?: string;
+  operatingHours?: string;
+  notes?: string;
 }
 
 export const LocationFinder: React.FC = () => {
-  const [locations, setLocations] = useState<FacilityResult[]>([]);
+  const [locations, setLocations] = useState<FacilityResult[]>(() =>
+    VERIFIED_DISPOSAL_LOCATIONS.map((loc) => ({
+      name: loc.name,
+      type: loc.type,
+      distance_km: loc.distanceKm,
+      address: `${loc.address}, ${loc.city}`,
+      lat: loc.coordinates.lat,
+      lon: loc.coordinates.lng,
+      phone: loc.phone,
+      operatingHours: loc.operatingHours,
+      notes: loc.notes,
+    }))
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [locatedCity, setLocatedCity] = useState<string>("");
+  const [locatedCity, setLocatedCity] = useState<string>("Sri Lanka (Western Province & Nationwide)");
 
   const fetchNearbyFacilities = async () => {
     setLoading(true);
@@ -34,13 +60,19 @@ export const LocationFinder: React.FC = () => {
           { headers: { "User-Agent": "EcoSortAI/1.0" } }
         );
         const data = await res.json();
-        setLocatedCity(data.address?.city || data.address?.town || data.address?.suburb || data.address?.state || "your area");
+        setLocatedCity(
+          data.address?.city ||
+            data.address?.town ||
+            data.address?.suburb ||
+            data.address?.state ||
+            "your current location"
+        );
       } catch {
-        setLocatedCity("your area");
+        setLocatedCity("your current location");
       }
 
       // Query Overpass for recycling/waste facilities
-      const radius = 10000;
+      const radius = 15000;
       const overpassQuery = `[out:json][timeout:15];(
         node["amenity"="recycling"](around:${radius},${lat},${lon});
         node["amenity"="waste_disposal"](around:${radius},${lat},${lon});
@@ -76,28 +108,42 @@ export const LocationFinder: React.FC = () => {
           if (!elLat || !elLon) return null;
           const d = haversine(lat, lon, elLat, elLon);
           return {
-            name: el.tags?.name || el.tags?.operator || "Recycling Drop-off Center",
+            name: el.tags?.name || el.tags?.operator || "Recycling Drop-off Point",
             type: el.tags?.amenity?.replace(/_/g, " ") || "recycling",
             distance_km: d,
-            address: el.tags?.["addr:street"] || el.tags?.["addr:full"] || "",
+            address: el.tags?.["addr:street"] || el.tags?.["addr:full"] || "Local Area, Sri Lanka",
             lat: elLat,
             lon: elLon,
           } as FacilityResult;
         })
         .filter((f): f is FacilityResult => Boolean(f))
         .sort((a, b) => a.distance_km - b.distance_km)
-        .slice(0, 10);
+        .slice(0, 12);
 
-      setLocations(facilities);
-      if (facilities.length === 0) {
-        setError("No public recycling facilities found within 10 km on OpenStreetMap. You can search directly on Google Maps below.");
+      if (facilities.length > 0) {
+        setLocations(facilities);
+      } else {
+        // Recalculate distance to verified Sri Lankan locations
+        const updated = VERIFIED_DISPOSAL_LOCATIONS.map((loc) => ({
+          name: loc.name,
+          type: loc.type,
+          distance_km: haversine(lat, lon, loc.coordinates.lat, loc.coordinates.lng),
+          address: `${loc.address}, ${loc.city}`,
+          lat: loc.coordinates.lat,
+          lon: loc.coordinates.lng,
+          phone: loc.phone,
+          operatingHours: loc.operatingHours,
+          notes: loc.notes,
+        })).sort((a, b) => a.distance_km - b.distance_km);
+
+        setLocations(updated);
       }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "";
       setError(
         msg.includes("denied")
-          ? "Location access was denied. Please allow location permissions to find nearby centers."
-          : "Could not fetch nearby facilities automatically. You can view open drop-off points."
+          ? "Location permission was denied. Showing verified Sri Lankan recycling hubs below."
+          : "Could not fetch GPS location. Showing verified Sri Lankan collection centers below."
       );
     } finally {
       setLoading(false);
@@ -121,15 +167,18 @@ export const LocationFinder: React.FC = () => {
       {/* Header Banner */}
       <div className="card-cute p-5 sm:p-6 bg-gradient-to-r from-emerald-50 via-white to-teal-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="h-12 w-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 shrink-0">
+          <div className="h-12 w-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 shrink-0">
             <Building2 className="h-6 w-6" />
           </div>
           <div>
+            <div className="inline-flex items-center gap-1 text-[11px] font-extrabold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-full mb-1">
+              <Sparkles className="h-3 w-3 text-emerald-600" /> Sri Lanka Verified Directory
+            </div>
             <h2 className="text-lg font-extrabold text-gray-900 tracking-tight">
-              Nearby Drop-off &amp; Recycling Centers
+              Sri Lankan Drop-off &amp; Recycling Hubs
             </h2>
-            <p className="text-xs text-gray-500">
-              Live OpenStreetMap GIS directory for verified disposal points
+            <p className="text-xs text-gray-600 font-medium">
+              Verified CEA e-waste centers, CMC municipal facilities &amp; PlasticCycle bins
             </p>
           </div>
         </div>
@@ -137,114 +186,99 @@ export const LocationFinder: React.FC = () => {
         <button
           onClick={fetchNearbyFacilities}
           disabled={loading}
-          className="flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow-sm shadow-emerald-600/30 hover:bg-emerald-700 active:scale-95 transition-all disabled:opacity-50 shrink-0"
+          className="flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-2.5 text-xs font-extrabold text-white shadow-sm shadow-emerald-600/30 hover:bg-emerald-700 active:scale-95 transition-all disabled:opacity-50 shrink-0 cursor-pointer"
         >
           {loading ? (
             <>
-              <Loader2 className="h-4 w-4 animate-spin" /> Locating...
+              <Loader2 className="h-4 w-4 animate-spin" /> Locating nearest...
             </>
           ) : (
             <>
-              <Navigation className="h-4 w-4" /> Find Nearest Centers
+              <Navigation className="h-4 w-4" /> Use GPS Location
             </>
           )}
         </button>
       </div>
 
-      {/* Error / Empty info */}
+      {/* Error info if GPS denied */}
       {error && (
-        <div className="card-cute p-4 text-center space-y-2 bg-amber-50/70 border-amber-200">
-          <MapPinOff className="h-6 w-6 text-amber-500 mx-auto" />
+        <div className="card-cute p-3.5 text-center space-y-1 bg-amber-50/80 border-amber-200">
           <p className="text-xs text-amber-900 font-medium">{error}</p>
-          <a
-            href="https://www.google.com/maps/search/recycling+center+near+me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 underline mt-1"
-          >
-            Search Google Maps <ExternalLink className="h-3 w-3" />
-          </a>
         </div>
       )}
 
-      {/* Default Guide if not searched yet */}
-      {locations.length === 0 && !loading && !error && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
-          <div className="card-cute p-4 space-y-1.5">
-            <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-              <MapPin className="h-4 w-4" />
-            </div>
-            <h4 className="text-xs font-bold text-gray-800">E-Waste Points</h4>
-            <p className="text-[11px] text-gray-500">Batteries, old phones, cables, and hazardous electronics.</p>
-          </div>
-          <div className="card-cute p-4 space-y-1.5">
-            <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-              <Building2 className="h-4 w-4" />
-            </div>
-            <h4 className="text-xs font-bold text-gray-800">Recycling Hubs</h4>
-            <p className="text-[11px] text-gray-500">Cardboard, plastic bottles, metal cans, glass jars.</p>
-          </div>
-          <div className="card-cute p-4 space-y-1.5">
-            <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto">
-              <Navigation className="h-4 w-4" />
-            </div>
-            <h4 className="text-xs font-bold text-gray-800">Community Donation</h4>
-            <p className="text-[11px] text-gray-500">Wearable clothes, pairs of shoes, and reusable books.</p>
-          </div>
-        </div>
-      )}
+      {/* Results Header */}
+      <div className="flex items-center justify-between px-1">
+        <p className="text-xs font-extrabold text-emerald-950">
+          Showing {locations.length} verified centers in {locatedCity}:
+        </p>
+        <span className="text-[11px] text-gray-500 font-medium">
+          Central Environmental Authority (CEA) Network
+        </span>
+      </div>
 
       {/* Results List */}
-      {locations.length > 0 && (
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between px-1">
-            <p className="text-xs font-bold text-emerald-900">
-              Found {locations.length} centers near {locatedCity}:
-            </p>
-            <button
-              onClick={fetchNearbyFacilities}
-              className="text-xs font-semibold text-emerald-700 hover:text-emerald-900"
-            >
-              Refresh
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {locations.map((loc, idx) => (
-              <div
-                key={idx}
-                className="card-cute p-3.5 flex items-center justify-between gap-3 hover:border-emerald-300"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="h-9 w-9 rounded-xl bg-emerald-100/70 text-emerald-700 flex items-center justify-center shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {locations.map((loc, idx) => (
+          <div
+            key={idx}
+            className="card-cute p-4 flex flex-col justify-between gap-3 hover:border-emerald-300 transition-all shadow-2xs"
+          >
+            <div>
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="h-9 w-9 rounded-xl bg-emerald-100/80 text-emerald-800 flex items-center justify-center shrink-0">
                     <MapPin className="h-4 w-4" />
                   </div>
-                  <div className="min-w-0">
-                    <h4 className="text-xs font-bold text-gray-800 truncate">{loc.name}</h4>
-                    <p className="text-[11px] text-gray-500 capitalize truncate">
-                      {loc.type} {loc.address ? `• ${loc.address}` : ""}
-                    </p>
+                  <div>
+                    <h4 className="text-xs sm:text-[13px] font-extrabold text-gray-900 leading-snug">
+                      {loc.name}
+                    </h4>
+                    <span className="inline-block rounded-md bg-emerald-50 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 border border-emerald-100 mt-0.5">
+                      {loc.type}
+                    </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="rounded-full bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 text-[10px]">
-                    {loc.distance_km.toFixed(1)} km
-                  </span>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lon}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="h-7 w-7 rounded-full bg-gray-100 hover:bg-emerald-600 hover:text-white flex items-center justify-center text-gray-600 transition-colors"
-                  >
-                    <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
+                <span className="rounded-full bg-emerald-100 text-emerald-900 font-black px-2.5 py-0.5 text-[10px] shrink-0">
+                  {loc.distance_km.toFixed(1)} km
+                </span>
               </div>
-            ))}
+
+              <p className="text-xs text-gray-600 font-medium mt-2 leading-relaxed">
+                {loc.address}
+              </p>
+
+              {loc.notes && (
+                <p className="text-[11px] text-gray-500 bg-gray-50/80 rounded-lg p-2 border border-gray-100 mt-2 leading-relaxed">
+                  {loc.notes}
+                </p>
+              )}
+            </div>
+
+            <div className="pt-2 border-t border-emerald-100/60 flex items-center justify-between text-xs text-gray-600">
+              {loc.phone ? (
+                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-800">
+                  <Phone className="h-3 w-3" /> {loc.phone}
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-[11px] text-gray-400">
+                  <Clock className="h-3 w-3" /> Public Drop-off
+                </span>
+              )}
+
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${loc.lat},${loc.lon}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-[11px] font-extrabold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200 transition-colors"
+              >
+                Directions <ExternalLink className="h-3 w-3" />
+              </a>
+            </div>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   );
 };
