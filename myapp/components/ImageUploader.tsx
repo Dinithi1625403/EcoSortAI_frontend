@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { Upload, Camera, Image as ImageIcon, Sparkles, RefreshCw } from "lucide-react";
+import { Upload, Camera, Image as ImageIcon, Sparkles, RefreshCw, Zap } from "lucide-react";
 
 interface ImageUploaderProps {
   onFileSelected: (file: File) => void;
@@ -36,19 +36,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
     if (file) onFileSelected(file);
   };
 
-  // Quick sample generator for user testing without needing files on their disk
-  const handleSampleSelect = async (sampleName: string, label: string) => {
-    // Generate a simple colored canvas image as a test sample
+  // Quick sample generator for testing
+  const handleSampleSelect = (sampleName: string, label: string) => {
     const canvas = document.createElement("canvas");
     canvas.width = 300;
     canvas.height = 300;
     const ctx = canvas.getContext("2d");
     if (ctx) {
-      // Draw background
       ctx.fillStyle = sampleName === "bottle" ? "#e0f2fe" : sampleName === "apple" ? "#fef2f2" : "#fefce8";
       ctx.fillRect(0, 0, 300, 300);
-      
-      // Draw subtle item representation
+
       ctx.fillStyle = sampleName === "bottle" ? "#0284c7" : sampleName === "apple" ? "#dc2626" : "#ca8a04";
       ctx.beginPath();
       ctx.arc(150, 150, 80, 0, Math.PI * 2);
@@ -100,10 +97,10 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
         </div>
 
         <p className="text-base font-bold text-gray-800 tracking-tight">
-          Drop your waste photo here, or <span className="text-emerald-600 underline decoration-emerald-300 underline-offset-2">browse</span>
+          Drop your photo here, or <span className="text-emerald-600 underline decoration-emerald-300 underline-offset-2">browse files</span>
         </p>
         <p className="mt-1 text-xs text-gray-500 max-w-sm">
-          Snap a bottle, battery, paper, food scraps, or electronic waste for instant AI sorting
+          Snap a photo of bottles, food scraps, batteries, paper, boxes, or clothing
         </p>
 
         {/* Feature Badges */}
@@ -115,10 +112,35 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
             <ImageIcon className="h-3 w-3 text-emerald-600" /> JPG, PNG, WEBP
           </span>
           <span className="flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200/80 px-3 py-1">
-            <Sparkles className="h-3 w-3 text-emerald-600" /> Instant Grad-CAM XAI
+            <Zap className="h-3 w-3 text-emerald-600" /> Instant Bin Result
           </span>
         </div>
       </div>
+
+      {/* Quick Test Samples */}
+      {!hasResult && (
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs text-gray-500">
+          <span className="font-semibold text-gray-400">Quick Test Samples:</span>
+          <button
+            onClick={() => handleSampleSelect("bottle", "Plastic Bottle")}
+            className="rounded-full bg-white hover:bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 transition-colors shadow-2xs cursor-pointer"
+          >
+            🥤 Plastic Bottle
+          </button>
+          <button
+            onClick={() => handleSampleSelect("apple", "Apple Core")}
+            className="rounded-full bg-white hover:bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 transition-colors shadow-2xs cursor-pointer"
+          >
+            🍎 Food Waste
+          </button>
+          <button
+            onClick={() => handleSampleSelect("cardboard", "Shipping Box")}
+            className="rounded-full bg-white hover:bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-bold text-emerald-800 transition-colors shadow-2xs cursor-pointer"
+          >
+            📦 Cardboard
+          </button>
+        </div>
+      )}
 
       {/* Re-upload / Reset Pill */}
       {hasResult && (
@@ -128,7 +150,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
               e.stopPropagation();
               onReset();
             }}
-            className="flex items-center gap-1.5 rounded-full bg-white border border-emerald-200 px-4 py-1.5 text-xs font-semibold text-emerald-800 shadow-xs hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95"
+            className="flex items-center gap-1.5 rounded-full bg-white border border-emerald-200 px-4 py-1.5 text-xs font-semibold text-emerald-800 shadow-xs hover:bg-emerald-50 hover:border-emerald-300 transition-all active:scale-95 cursor-pointer"
           >
             <RefreshCw className="h-3.5 w-3.5 text-emerald-600" /> Analyze Another Item
           </button>

@@ -24,7 +24,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         body: outgoing,
         signal: AbortSignal.timeout(45000),
       });
-    } catch (primaryErr: any) {
+    } catch (primaryErr: unknown) {
       // If 127.0.0.1 failed, try localhost as fallback (or vice versa)
       const altUrl = apiUrl.includes("127.0.0.1")
         ? apiUrl.replace("127.0.0.1", "localhost")
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const json = await res.json();
     return NextResponse.json(json);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Predict proxy error:", err);
     return NextResponse.json(
       {

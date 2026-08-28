@@ -12,9 +12,9 @@ interface NavbarProps {
 }
 
 const navItems: { id: NavTab; label: string; shortLabel: string; icon: React.ElementType }[] = [
-  { id: "classify", label: "AI Sorter & XAI", shortLabel: "Sort", icon: Sparkles },
-  { id: "locations", label: "Drop-off Centers", shortLabel: "Drop-offs", icon: MapPin },
-  { id: "about", label: "Waste Guide & AI", shortLabel: "Guide", icon: BookOpen },
+  { id: "classify", label: "Scan & Sort", shortLabel: "Sort", icon: Sparkles },
+  { id: "locations", label: "Find Drop-offs", shortLabel: "Drop-offs", icon: MapPin },
+  { id: "about", label: "Recycling Guide", shortLabel: "Guide", icon: BookOpen },
 ];
 
 export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
@@ -42,11 +42,11 @@ export const Navbar: React.FC<NavbarProps> = ({ activeTab, setActiveTab }) => {
                 EcoSort<span className="text-emerald-600">AI</span>
               </span>
               <span className="hidden sm:inline-block rounded-full bg-emerald-100/90 text-emerald-800 text-[10px] font-bold px-2 py-0.5 border border-emerald-200">
-                Smart XAI
+                Instant Sort
               </span>
             </div>
-            <p className="text-[11px] font-medium text-emerald-700/80 -mt-0.5">
-              Decision Support System
+            <p className="text-[11px] font-semibold text-emerald-700/90 -mt-0.5">
+              Smart Waste &amp; Recycling Assistant
             </p>
           </div>
         </button>

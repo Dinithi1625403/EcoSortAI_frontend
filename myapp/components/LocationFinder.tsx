@@ -56,8 +56,21 @@ export const LocationFinder: React.FC = () => {
       });
       const overpassData = await overpassRes.json();
 
-      const facilities: FacilityResult[] = (overpassData.elements || [])
-        .map((el: any) => {
+      interface OverpassElement {
+        lat?: number;
+        lon?: number;
+        center?: { lat: number; lon: number };
+        tags?: {
+          name?: string;
+          operator?: string;
+          amenity?: string;
+          "addr:street"?: string;
+          "addr:full"?: string;
+        };
+      }
+
+      const facilities: FacilityResult[] = ((overpassData.elements || []) as OverpassElement[])
+        .map((el) => {
           const elLat = el.lat ?? el.center?.lat;
           const elLon = el.lon ?? el.center?.lon;
           if (!elLat || !elLon) return null;
@@ -71,17 +84,18 @@ export const LocationFinder: React.FC = () => {
             lon: elLon,
           } as FacilityResult;
         })
-        .filter(Boolean)
-        .sort((a: FacilityResult, b: FacilityResult) => a.distance_km - b.distance_km)
+        .filter((f): f is FacilityResult => Boolean(f))
+        .sort((a, b) => a.distance_km - b.distance_km)
         .slice(0, 10);
 
       setLocations(facilities);
       if (facilities.length === 0) {
         setError("No public recycling facilities found within 10 km on OpenStreetMap. You can search directly on Google Maps below.");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "";
       setError(
-        err.message?.includes("denied")
+        msg.includes("denied")
           ? "Location access was denied. Please allow location permissions to find nearby centers."
           : "Could not fetch nearby facilities automatically. You can view open drop-off points."
       );

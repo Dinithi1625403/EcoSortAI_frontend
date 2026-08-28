@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Recycle, Trash2, BarChart3, TrendingUp, Clock,
   ChevronDown, ChevronUp, Leaf
@@ -15,13 +15,16 @@ interface AuditEntry {
 }
 
 export const ImpactDashboard: React.FC = () => {
-  const [entries, setEntries] = useState<AuditEntry[]>([]);
+  const [entries, setEntries] = useState<AuditEntry[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const stored = localStorage.getItem("ecosort_audit_log");
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
   const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("ecosort_audit_log");
-    if (stored) setEntries(JSON.parse(stored));
-  }, []);
 
   const categoryStats = entries.reduce<Record<string, number>>((acc, e) => {
     acc[e.category] = (acc[e.category] || 0) + 1;
@@ -98,7 +101,7 @@ export const ImpactDashboard: React.FC = () => {
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {visibleEntries.map((entry, i) => (
+            {visibleEntries.map((entry) => (
               <div key={entry.id} className="flex items-center gap-4 px-5 py-3">
                 <div className="h-8 w-8 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
                   <Recycle className="h-4 w-4 text-green-600" />

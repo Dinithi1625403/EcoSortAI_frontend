@@ -104,7 +104,15 @@ export async function fetchLiveOsmLocations(
       return getRecalculatedCuratedLocations(lat, lon, category);
     }
 
-    const results: DisposalLocation[] = data.elements.map((el: any, idx: number) => {
+    interface OSMElement {
+      id?: number | string;
+      lat?: number;
+      lon?: number;
+      center?: { lat: number; lon: number };
+      tags?: Record<string, string>;
+    }
+
+    const results: DisposalLocation[] = ((data.elements || []) as OSMElement[]).map((el, idx: number) => {
       const elLat = el.lat || el.center?.lat || lat;
       const elLon = el.lon || el.center?.lon || lon;
       const tags = el.tags || {};
